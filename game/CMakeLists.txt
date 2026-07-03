@@ -9,7 +9,7 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
-################# compile 3rdlibs #####################
+################# compile vendor #####################
 include(cmake/add_vendor.cmake)
 add_subdirectory(vendor)
 

@@ -54,7 +54,7 @@ jobs:
     - name: Build under PC
       if: matrix.android == 'none'
       working-directory: ./game
-      run: ${{ matrix.cmake-path }}cmake --build cmake-build
+      run: ${{ matrix.cmake-path }}cmake --build build
 
     - name: Prepare Android JDK
       if: runner.os == 'Linux' && matrix.android != 'none'
@@ -73,6 +73,8 @@ jobs:
         sudo apt update -y
         sudo apt install cmake ninja-build -y
         yes | sdkmanager --licenses
+        cp -r ./game ./android/app/jni/
+        cp -r game/assets android/app/assets/
         chmod +x ./android/gradlew
 
     - name: Build under Android
