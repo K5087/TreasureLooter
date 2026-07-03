@@ -1,11 +1,6 @@
 build
 logs
-android/org.visualgmq.tl/build
-android/org.visualgmq.tl/app/build
-android/org.visualgmq.tl/app/jni/game
-.cxx
-.idea
-.gradle
 .cache
 compile_commands.json
 imgui.ini
+install

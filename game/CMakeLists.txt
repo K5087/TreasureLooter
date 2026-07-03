@@ -7,8 +7,13 @@ set(CMAKE_CXX_STANDARD 26)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
+set_property(GLOBAL PROPERTY USE_FOLDERS ON)
+
+################# compile 3rdlibs #####################
+include(cmake/add_vendor.cmake)
 add_subdirectory(vendor)
 
+################ compile game ######################
 file(GLOB_RECURSE SRC ./src/*.cpp ./src/*.c)
 file(GLOB_RECURSE HEADER ./src/*.hpp ./src/*.h)
 file(GLOB_RECURSE ASSETS ./assets/*)
@@ -25,3 +30,17 @@ target_sources(${GAME_NAME} PRIVATE ${SRC} ${HEADER} ${ASSETS})
 target_include_directories(${GAME_NAME} PRIVATE src/include)
 target_compile_features(${GAME_NAME} PRIVATE cxx_std_17)
 target_link_libraries(${GAME_NAME} PRIVATE SDL3::SDL3 spdlog::spdlog stb_image imgui)
+
+################ instal #######################
+install(TARGETS ${GAME_NAME} DESTINATION .)
+install(DIRECTORY assets DESTINATION .)
+
+################ package ##################
+# include(InstallRequiredSystemLibraries)
+set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/LICENSE")
+set(CPACK_PACKAGE_VERSION_MAJOR "${PROJECT_VERSION_MAJOR}")
+set(CPACK_PACKAGE_VERSION_MINOR "${PROJECT_VERSION_MINOR}")
+set(CPACK_PACKAGE_VERSION_PATCH "${PROJECT_VERSION_PATCH}")
+set(CPACK_GENERATOR "ZIP")
+set(CPACK_SOURCE_GENERATOR "ZIP")
+include(CPack)
