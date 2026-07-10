@@ -1,11 +1,12 @@
-cmake_minimum_required(VERSION 3.20)
+cmake_minimum_required(VERSION 4.4)
+
+include(cmake/llvm.toolchain.cmake)
 
 project(TreasureLooter
-    VERSION 0.0.1)
+    VERSION 0.0.1
+    LANGUAGES CXX)
 
-set(CMAKE_CXX_STANDARD 23)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_EXTENSIONS OFF)
+
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
@@ -14,8 +15,10 @@ include(cmake/add_vendor.cmake)
 add_subdirectory(vendor)
 
 ################ compile game ######################
-file(GLOB_RECURSE SRC ./src/*.cpp ./src/*.c)
-file(GLOB_RECURSE HEADER ./src/*.hpp ./src/*.h)
+
+file(GLOB_RECURSE HEADER ${CMAKE_CURRENT_SOURCE_DIR}/src/header/*.hpp)
+file(GLOB_RECURSE MODULE ${CMAKE_CURRENT_SOURCE_DIR}/src/module/*.cppm)
+file(GLOB_RECURSE IMPL ${CMAKE_CURRENT_SOURCE_DIR}/src/impl/*.cpp ${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp)
 file(GLOB_RECURSE ASSETS ./assets/*)
 
 set(GAME_NAME ${PROJECT_NAME})
@@ -44,17 +47,23 @@ if (EMSCRIPTEN)
     )
 endif()
 
+target_sources(${GAME_NAME}
+    PRIVATE
+    ${HEADER} ${ASSETS} ${IMPL}
+    PRIVATE
+        FILE_SET cxx_modules TYPE CXX_MODULES FILES
+            ${MODULE}
+)
+target_include_directories(${GAME_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src/header)
 target_link_libraries(${GAME_NAME} PRIVATE SDL3::SDL3 spdlog::spdlog stb_image imgui)
-target_sources(${GAME_NAME} PRIVATE ${SRC} ${HEADER} ${ASSETS})
-target_include_directories(${GAME_NAME} PRIVATE src/include)
 target_compile_definitions(${GAME_NAME} PRIVATE _CRT_SECURE_NO_WARNINGS)
-
+set_property(TARGET ${GAME_NAME} PROPERTY CXX_MODULE_STD ON)
 ################ compile tools ######################
 if(NOT ANDROID)
     add_subdirectory(tools)
 endif()
 
-################ instal #######################
+################ install #######################
 install(TARGETS ${GAME_NAME} DESTINATION .)
 install(DIRECTORY assets DESTINATION .)
 
