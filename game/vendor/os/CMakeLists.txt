@@ -23,4 +23,6 @@ file(
     ${SOURCE_DIR}/*.cpp
 )
 
+include(cmake/target.cmake)
+
 add_subdirectory(${PROJECT_SOURCE_DIR}/src/common/argp)

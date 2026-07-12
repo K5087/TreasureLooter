@@ -1,18 +1,25 @@
 cmake_minimum_required(VERSION 4.4)
 
+################# toolchain setting #####################
 include(cmake/llvm.toolchain.cmake)
 
+################# project setting #####################
 project(TreasureLooter
     VERSION 0.0.1
     LANGUAGES CXX)
-
-
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
 ################# compile vendor #####################
 include(cmake/add_vendor.cmake)
 add_subdirectory(vendor)
+
+################ compile tools ######################
+if(NOT ANDROID)
+    add_subdirectory(tools)
+endif()
+
+
 
 ################ compile game ######################
 
@@ -58,10 +65,24 @@ target_include_directories(${GAME_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src/
 target_link_libraries(${GAME_NAME} PRIVATE SDL3::SDL3 spdlog::spdlog stb_image imgui)
 target_compile_definitions(${GAME_NAME} PRIVATE _CRT_SECURE_NO_WARNINGS)
 set_property(TARGET ${GAME_NAME} PROPERTY CXX_MODULE_STD ON)
-################ compile tools ######################
-if(NOT ANDROID)
-    add_subdirectory(tools)
-endif()
+
+################ run schema_parser ######################
+file(GLOB_RECURSE MUSTACHES ./tools/schema_parser/templet/*.mustache)
+set(SCHEMA_OUTPUT_PATH "schema/")
+set(SCHEMA_OUTPUT_FILES)
+foreach(schema ${MODULE})
+    cmake_path(GET schema FILENAME schema_filename)
+    cmake_path(REPLACE_EXTENSION schema_filename ".lua" OUTPUT_VARIABLE schema_generate_lua)
+    set(schema_final_path "${CMAKE_CURRENT_SOURCE_DIR}/${SCHEMA_OUTPUT_PATH}/${schema_generate_lua}")
+    list(APPEND SCHEMA_OUTPUT_FILES ${schema_final_path})
+endforeach()
+
+add_custom_command(OUTPUT ${SCHEMA_OUTPUT_FILES}
+    COMMAND $<TARGET_FILE:schema_parser> ./schema --output=${SCHEMA_OUTPUT_PATH} --src-prefix = "./"
+    DEPENDS $<TARGET_FILE:schema_parser> ${MODULE} ${MUSTACHES}
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+    COMMENT "parsing schemas..."
+)
 
 ################ install #######################
 install(TARGETS ${GAME_NAME} DESTINATION .)

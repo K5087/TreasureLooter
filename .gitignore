@@ -4,6 +4,7 @@ logs
 compile_commands.json
 imgui.ini
 install
+generate
 
 .gradle
 .cxx
