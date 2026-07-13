@@ -4,6 +4,7 @@
 		{
 			"name": "default",
 			"binaryDir": "${sourceDir}/build",
+			"generator": "Ninja",
 			"cacheVariables": {
 				"CMAKE_BUILD_TYPE": "Debug",
 				"CMAKE_INSTALL_PREFIX": "install"
