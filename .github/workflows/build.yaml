@@ -11,23 +11,15 @@ jobs:
             - name: Windows
               os: windows-latest
               android: false
-              emscripte: false
             - name: Ubuntu
               os: ubuntu-22.04
               android: false
-              emscripte: false
-            - name: Emscripten
-              os: ubuntu-latest
-              android: false
-              emscripte: true
             - name: MacOS
               os: macOS-latest
               android: false
-              emscripte: false
             - name: Android
               os: ubuntu-latest
               android: true
-              emscripte: false
     name: ${{ matrix.name }}
     runs-on: ${{ matrix.os }}
     steps:
@@ -35,9 +27,6 @@ jobs:
 
     - name: Prepare cmake
       uses: lukka/get-cmake@latest
-
-    - name: Prepare Emscripten
-      uses: emscripten/setup-emsdk@v14
 
     - name: Prepare Ubuntu
       if: contains(matrix.os, 'ubuntu')
@@ -56,12 +45,6 @@ jobs:
       run: |
         ${{ matrix.cmake-path }}cmake --preset=CI-Linux
 
-    - name: Config cmake(Emscripten)
-      if: ${{ contains(matrix.os, 'ubuntu') && matrix.emscripte }}
-      working-directory: ./game
-      run: |
-        ${{ matrix.cmake-path }}emcmake cmake --preset=CI-Emscripten
-
     - name: Config cmake(Windows)
       if: contains(matrix.os, 'windows')
       working-directory: ./game
@@ -69,7 +52,7 @@ jobs:
         ${{ matrix.cmake-path}}cmake --preset=CI-Windows
 
     - name: Build under PC
-      if: ${{ !matrix.android && !matrix.emscripte }}
+      if: ${{ !matrix.android }}
       working-directory: ./game
       run: ${{ matrix.cmake-path }}cmake --build build
 

@@ -33,25 +33,7 @@ if (ANDROID)
     set(GAME_NAME main)
     add_library(${GAME_NAME} SHARED)
 else()
-    if(EMSCRIPTEN)
-        set(GAME_NAME index)
-    endif()
     add_executable(${GAME_NAME})
-endif()
-
-if (EMSCRIPTEN)
-    message("emscripten build")
-    set (CMAKE_EXECUTABLE_SUFFIX .html)
-    set_target_properties(${GAME_NAME}
-        PROPERTIES
-            LINK_FLAGS "--preload-file=assets -s ALLOW_MEMORY_GROWTH=1")
-
-    add_custom_command(TARGET ${GAME_NAME}
-        POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/assets ${CMAKE_BINARY_DIR}/assets
-        COMMENT "copy assets file to build path"
-        VERBATIM
-    )
 endif()
 
 target_sources(${GAME_NAME}
