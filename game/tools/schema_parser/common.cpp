@@ -15,7 +15,8 @@ MustacheManager::MustacheManager()
       field_mustache(
           readMustache("tools/schema_parser/template/field.mustache")),
       schema_mustache(
-          readMustache("tools/schema_parser/template/schema.mustache"))
+          readMustache("tools/schema_parser/template/schema.mustache")),
+      enum_mustache(readMustache("tools/schema_parser/template/enum.mustache"))
 
 {}
 

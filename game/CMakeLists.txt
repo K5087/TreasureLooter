@@ -24,7 +24,7 @@ endif()
 ################ compile game ######################
 
 file(GLOB_RECURSE HEADER ${CMAKE_CURRENT_SOURCE_DIR}/src/header/*.hpp)
-file(GLOB_RECURSE MODULE ${CMAKE_CURRENT_SOURCE_DIR}/src/module/*.cppm)
+file(GLOB_RECURSE MODULE ${CMAKE_CURRENT_SOURCE_DIR}/src/module/*.cppm ${CMAKE_CURRENT_SOURCE_DIR}/src/serialize/*.hpp)
 file(GLOB_RECURSE IMPL ${CMAKE_CURRENT_SOURCE_DIR}/src/impl/*.cpp ${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp)
 file(GLOB_RECURSE ASSETS ./assets/*)
 
@@ -44,7 +44,7 @@ target_sources(${GAME_NAME}
             ${MODULE}
 )
 target_include_directories(${GAME_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src/header)
-target_link_libraries(${GAME_NAME} PRIVATE SDL3::SDL3 spdlog::spdlog stb_image imgui)
+target_link_libraries(${GAME_NAME} PRIVATE SDL3::SDL3 spdlog::spdlog stb_image imgui simdjson)
 target_compile_definitions(${GAME_NAME} PRIVATE _CRT_SECURE_NO_WARNINGS)
 set_property(TARGET ${GAME_NAME} PROPERTY CXX_MODULE_STD ON)
 

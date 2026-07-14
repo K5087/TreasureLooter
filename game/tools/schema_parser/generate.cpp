@@ -13,7 +13,7 @@ std::string generateClassCode(const ClassInfo& info) {
         field_data.set("type", field.type);
         field_data.set("name", field.name);
         field_datas << kainjow::mustache::data{
-            "fields", field_mustache.render(field_data)};
+            "field", field_mustache.render(field_data)};
     }
 
     kainjow::mustache::data class_data;
@@ -31,7 +31,31 @@ std::string generateSchemaCode(const SchemaInfo& schema_info) {
         class_data << kainjow::mustache::data{"class",
                                               generateClassCode(schema)};
     }
+
+    kainjow::mustache::data enum_data{kainjow::mustache::data::type::list};
+    for (auto& enum_info : schema_info.enums) {
+        enum_data << kainjow::mustache::data{"enum",
+                                             generateEnumCode(enum_info)};
+    }
     kainjow::mustache::data schema_data;
-    schema_data.set("class", class_data);
+    schema_data.set("classes", class_data);
+    schema_data.set("enums", enum_data);
     return schema_mustache.render(schema_data);
+}
+
+std::string generateEnumCode(const EnumInfo& info) {
+    auto& enum_mustache = MustacheManager::GetInst().enum_mustache;
+    kainjow::mustache::data item_datas{kainjow::mustache::data::type::list};
+    for (auto& item : info.items) {
+        std::string data = item.name;
+        if (item.value) {
+            data += " = " + std::to_string(*item.value) + ",";
+        }
+        item_datas << kainjow::mustache::data{"item", data};
+    }
+
+    kainjow::mustache::data enum_data;
+    enum_data.set("name", info.name);
+    enum_data.set("items", item_datas);
+    return enum_mustache.render(enum_data);
 }

@@ -8,113 +8,113 @@ import std;
 #define get_symbol(language, name) \
     ts_language_symbol_for_name(language, name, std::strlen(name), true);
 
-bool is_class(const TSNode& node) {
-    // for cache
-    const TSLanguage* language = ts_node_language(node);
-    static std::array class_names = {"class_specifier", "struct_specifier"};
-    static std::unordered_set<TSSymbol> class_symbols;
-    for (auto name : class_names) {
-        TSSymbol symbol = ts_language_symbol_for_name(language, name,
-                                                      std::strlen(name), true);
-        class_symbols.insert(symbol);
-    }
+static const TSLanguage* language = tree_sitter_cpp();
+static TSSymbol import_symbol = get_symbol(language, "module_declaration");
+static TSSymbol include_symbol = get_symbol(language, "preproc_include");
+static TSSymbol class_symbol = get_symbol(language, "class_specifier");
+static TSSymbol struct_symbol = get_symbol(language, "struct_specifier");
+static TSSymbol enum_symbol = get_symbol(language, "enum_specifier");
+static TSSymbol declaration_symbol = get_symbol(language, "field_declaration");
+static TSSymbol field_symbol = get_symbol(language, "field_identifier");
 
-    // impl
-    TSSymbol symbol = ts_node_symbol(node);
-    return class_symbols.contains(symbol);
+std::optional<std::string> parse_include(const TSNode& node,
+                                         std::string_view source_code) {
+    TSNode path = find_field(node, "path");
+    return std::string(get_node_string(path, source_code));
 }
 
-std::vector<std::string> find_includes(const TSNode& node,
-                                       std::string_view source_code) {
-    const TSLanguage* language = ts_node_language(node);
-    static TSSymbol include_symbol = get_symbol(language, "preproc_include");
-    static TSSymbol import_symbol = get_symbol(language, "module_declaration");
-
-    std::vector<std::string> includes;
-    for (uint32_t i = 0; i < ts_node_named_child_count(node); i++) {
-        TSNode child = ts_node_named_child(node, i);
-        TSSymbol child_symbol = ts_node_symbol(child);
-        if (child_symbol == include_symbol) {
-            TSNode path = find_field(child, "path");
-            includes.emplace_back(get_node_string(path, source_code));
-        } else if (child_symbol == import_symbol) {
-            TSNode name = find_field(child, "name");
-            includes.emplace_back(get_node_string(name, source_code));
-        }
-    }
-
-    return includes;
+std::optional<std::string> parse_import(const TSNode& node,
+                                        std::string_view source_code) {
+    TSNode name = find_field(node, "name");
+    return std::string(get_node_string(name, source_code));
 }
 
-std::vector<ClassInfo> find_class(const TSNode& node,
-                                  std::string_view source_code) {
-    std::vector<ClassInfo> class_infos;
-    for (uint32_t i = 0; i < ts_node_named_child_count(node); i++) {
-        TSNode child = ts_node_named_child(node, i);
-        if (is_class(child)) {
-            ClassInfo class_info;
-            TSNode type = find_field(child, "name");
-            class_info.name = get_node_string(type, source_code);
-            TSNode body = find_field(child, "body");
-            if (ts_node_is_null(body) or ts_node_named_child_count(body) == 0) {
-                continue;
-            }
-            class_info.fields = get_field(body, source_code);
-            class_infos.push_back(class_info);
-        } else {
-            std::vector<ClassInfo> child_class = find_class(child, source_code);
-            if (!child_class.empty()) {
-                class_infos.insert(class_infos.end(), child_class.begin(),
-                                   child_class.end());
+std::optional<ClassInfo> parse_class(const TSNode& node,
+                                     std::string_view source_code) {
+    ClassInfo info;
+    TSNode type = find_field(node, "name");
+    info.name = get_node_string(type, source_code);
+    TSNode body = find_field(node, "body");
+    if (ts_node_is_null(body) or ts_node_named_child_count(body) == 0) {
+        return std::nullopt;
+    }
+
+    for (uint32_t i = 0; i < ts_node_named_child_count(body); i++) {
+        TSNode child = ts_node_named_child(body, i);
+        if (ts_node_symbol(child) == declaration_symbol) {
+            auto field_info = parse_field(child, source_code);
+            if (field_info) {
+                info.fields.push_back(*field_info);
             }
         }
     }
-    return class_infos;
+    return info;
 }
 
-std::vector<FieldInfo> get_field(const TSNode& node,
-                                 std::string_view source_code) {
-    const TSLanguage* language = ts_node_language(node);
+std::optional<FieldInfo> parse_field(const TSNode& node,
+                                     std::string_view source_code) {
+    TSNode declarator = find_field(node, "declarator");
+    if (ts_node_is_null(declarator)) {
+        return std::nullopt;
+    }
 
-    static TSSymbol field_symbol = get_symbol(language, "field_identifier");
+    TSSymbol node_symbol = ts_node_symbol(declarator);
     static TSSymbol ptr_symbol = get_symbol(language, "pointer_declarator");
-    static TSSymbol declaration_symbol =
-        get_symbol(language, "field_declaration");
 
-    std::vector<FieldInfo> field_infos;
-    for (uint32_t i = 0; i < ts_node_named_child_count(node); i++) {
-        TSNode child = ts_node_named_child(node, i);
-        if (ts_node_symbol(child) != declaration_symbol) {
-            continue;
-        }
-
-        TSNode declarator = find_field(child, "declarator");
+    if (node_symbol == ptr_symbol) {
+        declarator = find_field(declarator, "declarator");
         if (ts_node_is_null(declarator)) {
-            continue;
+            return std::nullopt;
         }
-        TSSymbol node_symbol = ts_node_symbol(declarator);
-        if (node_symbol == ptr_symbol) {
-            declarator = find_field(declarator, "declarator");
-            if (ts_node_is_null(declarator)) {
-                continue;
-            }
-            node_symbol = ts_node_symbol(declarator);
+        node_symbol = ts_node_symbol(declarator);
+    }
+
+    if (node_symbol == field_symbol) {
+        FieldInfo info;
+        info.name = get_node_string(declarator, source_code);
+        TSNode type = find_field(node, "type");
+        info.type = get_node_string(type, source_code);
+        TSNode value = find_field(node, "default_value");
+        if (!ts_node_is_null(value)) {
+            info.value = get_node_string(value, source_code);
         }
 
-        if (node_symbol == field_symbol) {
-            FieldInfo info;
-            info.name = get_node_string(declarator, source_code);
-            TSNode type = find_field(child, "type");
-            info.type = get_node_string(type, source_code);
-            TSNode value = find_field(child, "default_value");
-            if (!ts_node_is_null(value)) {
-                info.value = get_node_string(value, source_code);
+        return info;
+    }
+    return std::nullopt;
+}
+
+std::optional<EnumInfo> parse_enum(const TSNode& node,
+                                   std::string_view source_code) {
+    EnumInfo info;
+
+    TSNode name = find_field(node, "name");
+    TSNode body = find_field(node, "body");
+    if (ts_node_is_null(body) or ts_node_named_child_count(body) == 0) {
+        return std::nullopt;
+    }
+
+    static TSSymbol enumerator_symbol = get_symbol(language, "enumerator");
+    for (uint32_t i = 0; i < ts_node_named_child_count(body); i++) {
+        TSNode child = ts_node_named_child(body, i);
+
+        if (ts_node_symbol(child) == enumerator_symbol) {
+            EnumInfo::Item item;
+
+            TSNode item_name = find_field(child, "name");
+            TSNode item_value = find_field(child, "value");
+            item.name = get_node_string(item_name, source_code);
+            if (!ts_node_is_null(item_value)) {
+                item.value = std::stoi(
+                    std::string(get_node_string(item_value, source_code)));
             }
 
-            field_infos.push_back(info);
+            info.items.push_back(item);
         }
     }
-    return field_infos;
+
+    info.name = get_node_string(name, source_code);
+    return info;
 }
 
 namespace TS {
@@ -141,6 +141,8 @@ std::optional<SchemaInfo> Parser::parse_cpp(std::filesystem::path filename) {
     // generate ast
     TSTree* tree = ts_parser_parse_string(parser, nullptr, source_code.c_str(),
                                           source_code.size());
+
+    TSNode root_node = ts_tree_root_node(tree);
     if (!tree) {
         std::cerr << "Failed to parse cpp\n";
         return std::nullopt;
@@ -148,14 +150,43 @@ std::optional<SchemaInfo> Parser::parse_cpp(std::filesystem::path filename) {
 
     SchemaInfo schema_info;
     schema_info.filename = filename;
+
     // parse impl
-    TSNode root_node = ts_tree_root_node(tree);
-    std::vector<std::string> includes = find_includes(root_node, source_code);
-    std::vector<ClassInfo> class_infos = find_class(root_node, source_code);
-    schema_info.classes = class_infos;
+    parse_node(schema_info, root_node, source_code);
 
     ts_tree_delete(tree);
     return schema_info;
 }
 
+void Parser::parse_node(SchemaInfo& info, const TSNode& node,
+                        std::string_view source_code) {
+    for (uint32_t i = 0; i < ts_node_named_child_count(node); i++) {
+        TSNode child = ts_node_named_child(node, i);
+        TSSymbol child_symbol = ts_node_symbol(child);
+        if (child_symbol == include_symbol) {
+            auto include = parse_include(child, source_code);
+            if (include) {
+                info.includes.push_back(*include);
+            }
+        } else if (child_symbol == import_symbol) {
+            auto import = parse_import(child, source_code);
+            if (import) {
+                info.includes.push_back(*import);
+            }
+        } else if (child_symbol == class_symbol or
+                   child_symbol == struct_symbol) {
+            auto class_info = parse_class(child, source_code);
+            if (class_info) {
+                info.classes.push_back(*class_info);
+            }
+        } else if (child_symbol == enum_symbol) {
+            auto enum_info = parse_enum(child, source_code);
+            if (enum_info) {
+                info.enums.push_back(*enum_info);
+            }
+        } else {
+            parse_node(info, child, source_code);
+        }
+    }
+}
 }  // namespace TS

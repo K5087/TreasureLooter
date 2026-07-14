@@ -9,9 +9,9 @@ import math;
 import image;
 
 export enum class Flip {
-    None = SDL_FLIP_NONE,
-    Horizontal = SDL_FLIP_HORIZONTAL,
-    Vertical = SDL_FLIP_VERTICAL,
+    None = 0,
+    Horizontal = 1,
+    Vertical = 2,
 };
 
 export class Renderer {
