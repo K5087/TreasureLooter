@@ -1,9 +1,10 @@
 module;
-#include <log.hpp>
 #include <sdl_call.hpp>
 
 #include <SDL3/SDL.h>
 module storage;
+
+import log;
 
 std::string IOMode2Mode(IOMode mode, bool binary, bool advance) {
     std::string result;

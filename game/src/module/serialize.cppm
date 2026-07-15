@@ -1,9 +1,10 @@
 module;
-#include <log.hpp>
 #include <simdjson.h>
 export module serialize;
 
 import std;
+import simdjson;
+import log;
 
 export {
 template <typename T>
@@ -18,7 +19,7 @@ std::string Serialize(const T& payload) {
 }
 
 template <typename T>
-void Deserialize(const std::string& json, T& payload) {
+void Deserialize(std::string& json, T& payload) {
     simdjson::ondemand::parser parser;
     simdjson::ondemand::document doc = parser.iterate(simdjson::pad(json));
     simdjson::error_code result = doc.get(payload);

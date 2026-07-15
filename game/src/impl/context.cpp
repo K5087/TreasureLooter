@@ -1,9 +1,7 @@
 module;
-#include <log.hpp>
 #include <sdl_call.hpp>
 
 #include <SDL3/SDL.h>
-#include <simdjson.h>
 module context;
 
 import image;
@@ -12,6 +10,8 @@ import renderer;
 import window;
 import math;
 import serialize;
+
+import log;
 
 import std;
 
@@ -95,7 +95,7 @@ Context::Context() {
     });
     auto transform = m_transform_manager->Get(entity);
 
-    std::string json = Serialize(transform);
+    std::string json = Serialize(*transform);
     std::cout << json << std::endl;
 
     Transform transform2;

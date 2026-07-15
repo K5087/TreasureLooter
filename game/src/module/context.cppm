@@ -14,7 +14,6 @@ import entity;
 
 import std;
 
-
 export class Context {
 public:
     static void Init();

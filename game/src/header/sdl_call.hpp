@@ -1,7 +1,5 @@
 #pragma once
 
-#include <log.hpp>
-
 #include <SDL3/SDL.h>
 
 #define SDL_CALL(expr)                             \

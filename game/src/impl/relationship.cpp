@@ -1,10 +1,10 @@
 module;
-#include <log.hpp>
 module relationship;
 
 import entity;
 import transform;
 import context;
+import log;
 
 RelationshipManager::RelationshipManager(Entity entity) : m_root(entity) {
     RegisterEntity(entity);

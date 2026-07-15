@@ -1,10 +1,10 @@
 module;
-#include <log.hpp>
 #include <sdl_call.hpp>
 
 #include <SDL3/SDL.h>
 module window;
 
+import log;
 import math;
 
 Window::Window(const std::string& title, int w, int h) {

@@ -3,10 +3,10 @@
 /////////////////////////////////////////////////////////////////////
 
 module;
-#include <simdjson.h>
 export module math:serialize;
 
 import :type;
+import simdjson;
 
 export namespace simdjson{
 

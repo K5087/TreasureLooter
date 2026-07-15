@@ -8,6 +8,7 @@ module image;
 import math;
 import renderer;
 import storage;
+import log;
 
 Image::Image(SDL_Renderer &renderer, const Path &filename) {
     int w, h;

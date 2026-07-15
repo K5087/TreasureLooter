@@ -4,6 +4,7 @@ module;
 module renderer;
 
 import math;
+import log;
 
 Renderer::Renderer(Window& window) {
     m_renderer = SDL_CreateRenderer(window.GetWindow(), nullptr);

@@ -1,12 +1,13 @@
-#include <log.hpp>
-
+module;
 #include <SDL3/SDL.h>
 #include <spdlog/sinks/android_sink.h>
 #include <spdlog/sinks/basic_file_sink.h>
 #include <spdlog/sinks/null_sink.h>
 #include <spdlog/sinks/stdout_color_sinks.h>
 
-#include <iostream>
+module log;
+
+import std;
 
 LogManager LogManager::manager;
 
@@ -28,5 +29,6 @@ LogManager::LogManager() {
     } catch (const spdlog::spdlog_ex& ex) {
         std::cout << "Log init failed: " << ex.what() << std::endl;
     }
+
 #endif  // SDL_PLATFORM_ANDORID
 }
