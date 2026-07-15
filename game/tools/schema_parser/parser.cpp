@@ -16,6 +16,8 @@ static TSSymbol struct_symbol = get_symbol(language, "struct_specifier");
 static TSSymbol enum_symbol = get_symbol(language, "enum_specifier");
 static TSSymbol declaration_symbol = get_symbol(language, "field_declaration");
 static TSSymbol field_symbol = get_symbol(language, "field_identifier");
+static TSSymbol access_symbol = get_symbol(language, "access_specifier");
+static TSSymbol union_symbol = get_symbol(language, "union_specifier");
 
 std::optional<std::string> parse_include(const TSNode& node,
                                          std::string_view source_code) {
@@ -38,10 +40,22 @@ std::optional<ClassInfo> parse_class(const TSNode& node,
     if (ts_node_is_null(body) or ts_node_named_child_count(body) == 0) {
         return std::nullopt;
     }
-
+    static bool access = true;
+    access = true;
     for (uint32_t i = 0; i < ts_node_named_child_count(body); i++) {
         TSNode child = ts_node_named_child(body, i);
-        if (ts_node_symbol(child) == declaration_symbol) {
+        TSSymbol symbol = ts_node_symbol(child);
+        if (symbol == access_symbol) {
+            if (get_node_string(child, source_code) == "private") {
+                access = false;
+            } else {
+                access = true;
+            }
+        }
+        if (!access) {
+            continue;
+        }
+        if (symbol == declaration_symbol) {
             auto field_info = parse_field(child, source_code);
             if (field_info) {
                 info.fields.push_back(*field_info);
@@ -53,7 +67,17 @@ std::optional<ClassInfo> parse_class(const TSNode& node,
 
 std::optional<FieldInfo> parse_field(const TSNode& node,
                                      std::string_view source_code) {
-    TSNode declarator = find_field(node, "declarator");
+    TSNode impl;
+    TSNode type = find_field(node, "type");
+    if (ts_node_symbol(type) == union_symbol) {
+        TSNode body = find_field(type, "body");
+        auto count = ts_node_named_child_count(body);
+        if (count == 0) {
+            return std::nullopt;
+        }
+        impl = ts_node_named_child(body, 0);
+    }
+    TSNode declarator = find_field(impl, "declarator");
     if (ts_node_is_null(declarator)) {
         return std::nullopt;
     }
@@ -71,9 +95,9 @@ std::optional<FieldInfo> parse_field(const TSNode& node,
 
     if (node_symbol == field_symbol) {
         FieldInfo info;
-        info.name = get_node_string(declarator, source_code);
-        TSNode type = find_field(node, "type");
+        TSNode type = find_field(impl, "type");
         info.type = get_node_string(type, source_code);
+        info.name = get_node_string(declarator, source_code);
         TSNode value = find_field(node, "default_value");
         if (!ts_node_is_null(value)) {
             info.value = get_node_string(value, source_code);

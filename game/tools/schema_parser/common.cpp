@@ -10,13 +10,17 @@ MustacheManager& MustacheManager::GetInst() {
 }
 
 MustacheManager::MustacheManager()
-    : class_mustache(
-          readMustache("tools/schema_parser/template/class.mustache")),
-      field_mustache(
-          readMustache("tools/schema_parser/template/field.mustache")),
-      schema_mustache(
-          readMustache("tools/schema_parser/template/schema.mustache")),
-      enum_mustache(readMustache("tools/schema_parser/template/enum.mustache"))
+    : lua_class(
+          readMustache("tools/schema_parser/template/lua/class.mustache")),
+      lua_field(
+          readMustache("tools/schema_parser/template/lua/field.mustache")),
+      lua_schema(
+          readMustache("tools/schema_parser/template/lua/schema.mustache")),
+      lua_enum(readMustache("tools/schema_parser/template/lua/enum.mustache")),
+      cpp_serialize(
+          readMustache("tools/schema_parser/template/cpp/serialize.mustache")),
+      cpp_schema(
+          readMustache("tools/schema_parser/template/cpp/schema.mustache"))
 
 {}
 

@@ -3,6 +3,7 @@ module;
 #include <sdl_call.hpp>
 
 #include <SDL3/SDL.h>
+#include <simdjson.h>
 module context;
 
 import image;
@@ -10,6 +11,9 @@ import inspector;
 import renderer;
 import window;
 import math;
+import serialize;
+
+import std;
 
 std::unique_ptr<Context> Context::instance;
 
@@ -89,15 +93,14 @@ Context::Context() {
     m_transform_manager->RegisterEntity(entity, Pose{
                                                     {200, 200}
     });
-    // GameObject go;
-    // go.m_pose.m_position = {200, 200};
-    // go.m_sprite.m_image =
-    //     m_image_manager->Load("assets/Characters/Statue/SpriteSheet.png");
-    // auto tile_size = go.m_sprite.m_image->GetSize() / Vec2{4, 7};
-    // go.m_sprite.m_region.m_szie = tile_size;
-    // go.m_sprite.m_size = 3 * tile_size;
-    //
-    // m_root.m_children.push_back(go);
+    auto transform = m_transform_manager->Get(entity);
+
+    std::string json = Serialize(transform);
+    std::cout << json << std::endl;
+
+    Transform transform2;
+    Deserialize(json, transform2);
+    std::cout << transform2.m_pose.m_position.x << std::endl;
 }
 
 void Context::logicUpdate() {

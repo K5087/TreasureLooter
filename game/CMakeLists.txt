@@ -24,8 +24,8 @@ endif()
 ################ compile game ######################
 
 file(GLOB_RECURSE HEADER ${CMAKE_CURRENT_SOURCE_DIR}/src/header/*.hpp)
-file(GLOB_RECURSE MODULE ${CMAKE_CURRENT_SOURCE_DIR}/src/module/*.cppm ${CMAKE_CURRENT_SOURCE_DIR}/src/serialize/*.hpp)
-file(GLOB_RECURSE IMPL ${CMAKE_CURRENT_SOURCE_DIR}/src/impl/*.cpp ${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp)
+file(GLOB_RECURSE MODULE ${CMAKE_CURRENT_SOURCE_DIR}/src/module/*.cppm ${CMAKE_CURRENT_SOURCE_DIR}/schema/cpp/*.cppm)
+file(GLOB_RECURSE IMPL ${CMAKE_CURRENT_SOURCE_DIR}/src/impl/*.cpp ${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp )
 file(GLOB_RECURSE ASSETS ./assets/*)
 
 set(GAME_NAME ${PROJECT_NAME})

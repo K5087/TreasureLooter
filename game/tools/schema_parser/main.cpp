@@ -9,7 +9,7 @@ int main(int argc, char** argv) {
     // arg parse
     os::argp::Parser parser;
     std::filesystem::path parse_dir;
-    std::filesystem::path output_dir = "generate";
+    std::filesystem::path output_dir = "schema";
     std::filesystem::path src_prefix;
     parser.add_pos("parse_dir", true, "parse directory",
                    os::argp::Boundary::one_arg);
@@ -55,13 +55,24 @@ int main(int argc, char** argv) {
         }
     }
 
-    std::filesystem::create_directories(output_dir);
-
+    std::filesystem::create_directories(output_dir / "lua");
+    // generate lua
     for (auto& info : manager.infos) {
-        std::string code = generateSchemaCode(info);
+        std::string code = lua::generateSchemaCode(info);
         auto filename = info.filename.filename();
         filename.replace_extension(".lua");
-        std::ofstream file(output_dir / filename);
+        std::ofstream file(output_dir / "lua" / filename);
+        file.write(code.c_str(), code.length());
+    }
+
+    std::filesystem::create_directories(output_dir / "cpp");
+    // generate serialize
+    for (auto& info : manager.infos) {
+        std::string code = cpp::generateSchemaCode(info);
+        auto filename = info.filename.filename();
+        filename.replace_extension(".cppm");
+
+        std::ofstream file(output_dir / "cpp" / filename);
         file.write(code.c_str(), code.length());
     }
 
