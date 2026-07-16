@@ -46,6 +46,29 @@ Context::~Context() {
 }
 
 void Context::Update() {
+    ///////// this is a test /////////////
+    // static bool executed = false;
+    // if (!executed) {
+    //     auto prefab = LoadEntityInstanceAsset("assets/gpa/waggo.entity.xml");
+    //     if (prefab.m_data.m_transform) {
+    //         m_transform_manager->RegisterEntity(
+    //             prefab.m_eneity, prefab.m_data.m_transform.value());
+    //     }
+    //     if (prefab.m_data.m_sprite) {
+    //         m_sprite_manager->RegisterEntity(prefab.m_entity,
+    //                                          prefab.m_data.m_sprite.value());
+    //     }
+    //     if (prefab.m_data.m_relationship) {
+    //         m_relation_manager->RegisterEntity(
+    //             prefab.m_entity, prefab.m_data.m_relationship.value());
+    //     }
+    //
+    //     m_relation_manager->Get(m_root_entity)
+    //         ->m_children.push_back(prefab.m_entity);
+    //
+    //     executed = true;
+    // }
+    /////////////////////////////////////
     logicUpdate();
     renderUpdate();
 }
@@ -59,6 +82,10 @@ void Context::HandleEvents(const SDL_Event &event) {
 
 bool Context::ShouldExit() {
     return m_should_exit;
+}
+
+Entity Context::GetRootEntity() {
+    return m_root_entity;
 }
 
 Context::Context() {
@@ -79,28 +106,7 @@ Context::Context() {
     m_sprite_manager = std::make_unique<SpriteManager>();
     m_relation_manager = std::make_unique<RelationshipManager>(m_root_entity);
 
-    // this is a test
-    Entity entity = createEntity();
-    m_relation_manager->Get(m_root_entity)->m_children.push_back(entity);
     m_transform_manager->RegisterEntity(m_root_entity);
-    Sprite sprite;
-    sprite.m_image =
-        m_image_manager->Load("assets/Characters/Statue/SpriteSheet.png");
-    auto tile_size = sprite.m_image->GetSize() / Vec2{4, 7};
-    sprite.m_region.m_szie = tile_size;
-    sprite.m_size = 3 * tile_size;
-    m_sprite_manager->RegisterEntity(entity, std::move(sprite));
-    m_transform_manager->RegisterEntity(entity, Pose{
-                                                    {200, 200}
-    });
-    auto transform = m_transform_manager->Get(entity);
-
-    std::string json = Serialize(*transform);
-    std::cout << json << std::endl;
-
-    Transform transform2;
-    Deserialize(json, transform2);
-    std::cout << transform2.m_pose.m_position.x << std::endl;
 }
 
 void Context::logicUpdate() {

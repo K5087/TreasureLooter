@@ -42,7 +42,7 @@
 ---@class Pose
 ---@field m_position Vec2
 ---@field m_rotation Degrees
----@field m_scale float
+---@field m_scale Vec2
 
 
 

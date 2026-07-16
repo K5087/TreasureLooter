@@ -1,15 +1,13 @@
 module;
 export module relationship;
+export import :type;
+export import :serialize;
 
 import entity;
 import manager;
 import transform;
 
 import std;
-
-export struct Relationship {
-    std::vector<Entity> m_children;
-};
 
 export class RelationshipManager : public ComponentManager<Relationship> {
 public:

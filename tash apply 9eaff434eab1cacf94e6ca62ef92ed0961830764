@@ -1,0 +1,498 @@
+[1mdiff --git a/game/CMakeLists.txt b/game/CMakeLists.txt[m
+[1mindex f36d484..ee90347 100644[m
+[1m--- a/game/CMakeLists.txt[m
+[1m+++ b/game/CMakeLists.txt[m
+[36m@@ -18,8 +18,28 @@[m [madd_subdirectory(vendor)[m
+ if(NOT ANDROID)[m
+     add_subdirectory(tools)[m
+ endif()[m
+[31m-[m
+[31m-[m
+[32m+[m[32m#[m
+[32m+[m[32m# ################ run schema_parser ######################[m
+[32m+[m[32m# set(SCHEMA_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src/module/type)[m
+[32m+[m[32m# file(GLOB_RECURSE TYPES ${SCHEMA_DIR}/*.cppm)[m
+[32m+[m[32m# file(GLOB_RECURSE MUSTACHES ./tools/schema_parser/template/*.mustache)[m
+[32m+[m[32m# set(SCHEMA_OUTPUT_PATH "schema/")[m
+[32m+[m[32m# set(SCHEMA_OUTPUT_FILES)[m
+[32m+[m[32m# foreach(schema ${TYPES})[m
+[32m+[m[32m#     cmake_path(GET schema FILENAME schema_filename)[m
+[32m+[m[32m#     cmake_path(REPLACE_EXTENSION schema_filename ".lua" OUTPUT_VARIABLE schema_generate_lua)[m
+[32m+[m[32m#     cmake_path(REPLACE_EXTENSION schema_filename ".cppm" OUTPUT_VARIABLE schema_generate_cppm)[m
+[32m+[m[32m#     set(schema_lua_path "${CMAKE_CURRENT_SOURCE_DIR}/${SCHEMA_OUTPUT_PATH}/lua/${schema_generate_lua}")[m
+[32m+[m[32m#     set(schema_cpp_path "${CMAKE_CURRENT_SOURCE_DIR}/${SCHEMA_OUTPUT_PATH}/cpp/${schema_generate_cppm}")[m
+[32m+[m[32m#     list(APPEND SCHEMA_OUTPUT_FILES ${schema_lua_path} ${schema_cpp_path})[m
+[32m+[m[32m# endforeach()[m
+[32m+[m[32m#[m
+[32m+[m[32m# add_custom_command(OUTPUT ${SCHEMA_OUTPUT_FILES}[m
+[32m+[m[32m#     COMMAND $<TARGET_FILE:schema_parser> ${SCHEMA_DIR} --output=${SCHEMA_OUTPUT_PATH} --src-prefix = "./"[m
+[32m+[m[32m#     DEPENDS $<TARGET_FILE:schema_parser> ${TYPES} ${MUSTACHES}[m
+[32m+[m[32m#     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}[m
+[32m+[m[32m#     COMMENT "parsing schemas..."[m
+[32m+[m[32m# )[m
+ [m
+ ################ compile game ######################[m
+ [m
+[36m@@ -48,24 +68,6 @@[m [mtarget_link_libraries(${GAME_NAME} PRIVATE SDL3::SDL3 spdlog::spdlog stb_image i[m
+ target_compile_definitions(${GAME_NAME} PRIVATE _CRT_SECURE_NO_WARNINGS)[m
+ set_property(TARGET ${GAME_NAME} PROPERTY CXX_MODULE_STD ON)[m
+ [m
+[31m-################ run schema_parser ######################[m
+[31m-file(GLOB_RECURSE MUSTACHES ./tools/schema_parser/templet/*.mustache)[m
+[31m-set(SCHEMA_OUTPUT_PATH "schema/")[m
+[31m-set(SCHEMA_OUTPUT_FILES)[m
+[31m-foreach(schema ${MODULE})[m
+[31m-    cmake_path(GET schema FILENAME schema_filename)[m
+[31m-    cmake_path(REPLACE_EXTENSION schema_filename ".lua" OUTPUT_VARIABLE schema_generate_lua)[m
+[31m-    set(schema_final_path "${CMAKE_CURRENT_SOURCE_DIR}/${SCHEMA_OUTPUT_PATH}/${schema_generate_lua}")[m
+[31m-    list(APPEND SCHEMA_OUTPUT_FILES ${schema_final_path})[m
+[31m-endforeach()[m
+[31m-[m
+[31m-add_custom_command(OUTPUT ${SCHEMA_OUTPUT_FILES}[m
+[31m-    COMMAND $<TARGET_FILE:schema_parser> ./schema --output=${SCHEMA_OUTPUT_PATH} --src-prefix = "./"[m
+[31m-    DEPENDS $<TARGET_FILE:schema_parser> ${MODULE} ${MUSTACHES}[m
+[31m-    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}[m
+[31m-    COMMENT "parsing schemas..."[m
+[31m-)[m
+[31m-[m
+ ################ install #######################[m
+ install(TARGETS ${GAME_NAME} DESTINATION .)[m
+ install(DIRECTORY assets DESTINATION .)[m
+[1mdiff --git a/game/schema/lua/math.lua b/game/schema/lua/math.lua[m
+[1mindex 47c119c..13652cc 100644[m
+[1m--- a/game/schema/lua/math.lua[m
+[1m+++ b/game/schema/lua/math.lua[m
+[36m@@ -42,7 +42,7 @@[m
+ ---@class Pose[m
+ ---@field m_position Vec2[m
+ ---@field m_rotation Degrees[m
+[31m----@field m_scale float[m
+[32m+[m[32m---@field m_scale Vec2[m[41m[m
+ [m
+ [m
+ [m
+[1mdiff --git a/game/src/impl/context.cpp b/game/src/impl/context.cpp[m
+[1mindex 240949a..457be41 100644[m
+[1m--- a/game/src/impl/context.cpp[m
+[1m+++ b/game/src/impl/context.cpp[m
+[36m@@ -46,6 +46,29 @@[m [mContext::~Context() {[m
+ }[m
+ [m
+ void Context::Update() {[m
+[32m+[m[32m    ///////// this is a test /////////////[m
+[32m+[m[32m    // static bool executed = false;[m
+[32m+[m[32m    // if (!executed) {[m
+[32m+[m[32m    //     auto prefab = LoadEntityInstanceAsset("assets/gpa/waggo.entity.xml");[m
+[32m+[m[32m    //     if (prefab.m_data.m_transform) {[m
+[32m+[m[32m    //         m_transform_manager->RegisterEntity([m
+[32m+[m[32m    //             prefab.m_eneity, prefab.m_data.m_transform.value());[m
+[32m+[m[32m    //     }[m
+[32m+[m[32m    //     if (prefab.m_data.m_sprite) {[m
+[32m+[m[32m    //         m_sprite_manager->RegisterEntity(prefab.m_entity,[m
+[32m+[m[32m    //                                          prefab.m_data.m_sprite.value());[m
+[32m+[m[32m    //     }[m
+[32m+[m[32m    //     if (prefab.m_data.m_relationship) {[m
+[32m+[m[32m    //         m_relation_manager->RegisterEntity([m
+[32m+[m[32m    //             prefab.m_entity, prefab.m_data.m_relationship.value());[m
+[32m+[m[32m    //     }[m
+[32m+[m[32m    //[m
+[32m+[m[32m    //     m_relation_manager->Get(m_root_entity)[m
+[32m+[m[32m    //         ->m_children.push_back(prefab.m_entity);[m
+[32m+[m[32m    //[m
+[32m+[m[32m    //     executed = true;[m
+[32m+[m[32m    // }[m
+[32m+[m[32m    /////////////////////////////////////[m
+     logicUpdate();[m
+     renderUpdate();[m
+ }[m
+[36m@@ -61,6 +84,10 @@[m [mbool Context::ShouldExit() {[m
+     return m_should_exit;[m
+ }[m
+ [m
+[32m+[m[32mEntity Context::GetRootEntity() {[m
+[32m+[m[32m    return m_root_entity;[m
+[32m+[m[32m}[m
+[32m+[m
+ Context::Context() {[m
+     SDL_CALL(SDL_Init(SDL_INIT_EVENTS | SDL_INIT_VIDEO | SDL_INIT_JOYSTICK |[m
+                       SDL_INIT_GAMEPAD));[m
+[36m@@ -79,28 +106,7 @@[m [mContext::Context() {[m
+     m_sprite_manager = std::make_unique<SpriteManager>();[m
+     m_relation_manager = std::make_unique<RelationshipManager>(m_root_entity);[m
+ [m
+[31m-    // this is a test[m
+[31m-    Entity entity = createEntity();[m
+[31m-    m_relation_manager->Get(m_root_entity)->m_children.push_back(entity);[m
+     m_transform_manager->RegisterEntity(m_root_entity);[m
+[31m-    Sprite sprite;[m
+[31m-    sprite.m_image =[m
+[31m-        m_image_manager->Load("assets/Characters/Statue/SpriteSheet.png");[m
+[31m-    auto tile_size = sprite.m_image->GetSize() / Vec2{4, 7};[m
+[31m-    sprite.m_region.m_szie = tile_size;[m
+[31m-    sprite.m_size = 3 * tile_size;[m
+[31m-    m_sprite_manager->RegisterEntity(entity, std::move(sprite));[m
+[31m-    m_transform_manager->RegisterEntity(entity, Pose{[m
+[31m-                                                    {200, 200}[m
+[31m-    });[m
+[31m-    auto transform = m_transform_manager->Get(entity);[m
+[31m-[m
+[31m-    std::string json = Serialize(*transform);[m
+[31m-    std::cout << json << std::endl;[m
+[31m-[m
+[31m-    Transform transform2;[m
+[31m-    Deserialize(json, transform2);[m
+[31m-    std::cout << transform2.m_pose.m_position.x << std::endl;[m
+ }[m
+ [m
+ void Context::logicUpdate() {[m
+[1mdiff --git a/game/src/impl/image.cpp b/game/src/impl/image.cpp[m
+[1mindex 42a91f3..931bba8 100644[m
+[1m--- a/game/src/impl/image.cpp[m
+[1m+++ b/game/src/impl/image.cpp[m
+[36m@@ -10,11 +10,12 @@[m [mimport renderer;[m
+ import storage;[m
+ import log;[m
+ [m
+[31m-Image::Image(SDL_Renderer &renderer, const Path &filename) {[m
+[32m+[m[32mImage::Image(SDL_Renderer &renderer, const Path &filename)[m
+[32m+[m[32m    : m_filename(filename) {[m
+     int w, h;[m
+ [m
+     auto file = IOStream::CreateFromFile(filename, IOMode::Read, true);[m
+[31m-    auto content = file->ReadData();[m
+[32m+[m[32m    auto content = file->Read();[m
+ [m
+     stbi_uc *data =[m
+         stbi_load_from_memory((const stbi_uc *)content.data(), content.size(),[m
+[36m@@ -59,6 +60,10 @@[m [mSDL_Texture *Image::GetTexture() const {[m
+     return m_texture;[m
+ }[m
+ [m
+[32m+[m[32mconst Path &Image::Filename() const {[m
+[32m+[m[32m    return m_filename;[m
+[32m+[m[32m}[m
+[32m+[m
+ ImageManager::ImageManager(SDL_Renderer &renderer) : m_renderer(renderer) {}[m
+ [m
+ Image *ImageManager::Load(const Path &filename) {[m
+[1mdiff --git a/game/src/impl/renderer.cpp b/game/src/impl/renderer.cpp[m
+[1mindex abe718d..ac89aac 100644[m
+[1m--- a/game/src/impl/renderer.cpp[m
+[1m+++ b/game/src/impl/renderer.cpp[m
+[36m@@ -64,7 +64,7 @@[m [mvoid Renderer::DrawImage(const Image& image, const Region& src,[m
+     SDL_CALL(SDL_RenderTextureRotated([m
+         m_renderer, image.GetTexture(), &src_rect, &dst_rect, rotation.Value(),[m
+         &sdl_center,[m
+[31m-        static_cast<SDL_FlipMode>(static_cast<unsigned int>(flip))));[m
+[32m+[m[32m        static_cast<SDL_FlipMode>(flip.Value()));[m
+ }[m
+ [m
+ void Renderer::Clear() {[m
+[1mdiff --git a/game/src/impl/storage.cpp b/game/src/impl/storage.cpp[m
+[1mindex 70159f7..f9bbaa2 100644[m
+[1m--- a/game/src/impl/storage.cpp[m
+[1m+++ b/game/src/impl/storage.cpp[m
+[36m@@ -47,12 +47,28 @@[m [msize_t IOStream::GetSize() const {[m
+     return size;[m
+ }[m
+ [m
+[31m-std::vector<char> IOStream::ReadData() const {[m
+[32m+[m[32mstd::vector<char> IOStream::Read() const {[m
+     std::vector<char> result(GetSize());[m
+[31m-    SDL_CALL(SDL_ReadIO(m_stream, result.data(), result.size()));[m
+[32m+[m[32m    std::size_t size = 0;[m
+[32m+[m[32m    std::size_t read_size;[m
+[32m+[m[32m    while ((read_size = SDL_ReadIO(m_stream, result.data() + size,[m
+[32m+[m[32m                                   result.size() - size)) > 0) {[m
+[32m+[m[32m        size += read_size;[m
+[32m+[m[32m    }[m
+[32m+[m[32m    if (read_size < 0) {[m
+[32m+[m[32m        LOGE("SDL_ReadIO failed: {}", SDL_GetError());[m
+[32m+[m[32m        return {};[m
+[32m+[m[32m    }[m
+     return result;[m
+ }[m
+ [m
+[32m+[m[32mvoid IOStream::Write(const char* data, std::size_t size) {[m
+[32m+[m[32m    std::size_t write_size = SDL_WriteIO(m_stream, data, size);[m
+[32m+[m[32m    if (write_size < 0) {[m
+[32m+[m[32m        LOGE("SDL_WriteIO failed: {}", SDL_GetError());[m
+[32m+[m[32m    }[m
+[32m+[m[32m}[m
+[32m+[m
+ IOStream::~IOStream() {[m
+     SDL_CloseIO(m_stream);[m
+ }[m
+[1mdiff --git a/game/src/module/context.cppm b/game/src/module/context.cppm[m
+[1mindex 2c01cd2..0a58c72 100644[m
+[1m--- a/game/src/module/context.cppm[m
+[1m+++ b/game/src/module/context.cppm[m
+[36m@@ -40,14 +40,14 @@[m [mpublic:[m
+     std::unique_ptr<TransformManager> m_transform_manager;[m
+     std::unique_ptr<SpriteManager> m_sprite_manager;[m
+ [m
+[32m+[m[32m    Entity GetRootEntity();[m
+[32m+[m
+ private:[m
+     static std::unique_ptr<Context> instance;[m
+     bool m_should_exit = false;[m
+     Entity m_last_entity = 0;[m
+     Entity m_root_entity;[m
+ [m
+[31m-    GameObject m_root;[m
+[31m-[m
+     Context();[m
+ [m
+     void logicUpdate();[m
+[1mdiff --git a/game/src/module/flag.cppm b/game/src/module/flag.cppm[m
+[1mindex edc53bd..b8415dc 100644[m
+[1m--- a/game/src/module/flag.cppm[m
+[1m+++ b/game/src/module/flag.cppm[m
+[36m@@ -16,11 +16,11 @@[m [mpublic:[m
+     Flags(const Flags &) = default;[m
+     Flags(Flags &&) = default;[m
+ [m
+[31m-    Flags operator|(T o) const {[m
+[32m+[m[32m    underlying_type operator|(T o) const {[m
+         return Flags(m_value | static_cast<underlying_type>(o));[m
+     }[m
+ [m
+[31m-    Flags operator&(T o) const {[m
+[32m+[m[32m    underlying_type operator&(T o) const {[m
+         return Flags(m_value & static_cast<underlying_type>(o));[m
+     }[m
+ [m
+[36m@@ -43,10 +43,22 @@[m [mpublic:[m
+ [m
+     Flags operator~() const noexcept { return ~m_value; }[m
+ [m
+[32m+[m[32m    void Remove(T o) { m_value &= ~static_cast<underlying_type>(o); }[m
+[32m+[m
+     operator T() const { return static_cast<T>(m_value); }[m
+ [m
+[31m-    operator underlying_type() const { return m_value; }[m
+[32m+[m[32m    underlying_type Value() const { return m_value; }[m
+ [m
+ private:[m
+     underlying_type m_value{};[m
+ };[m
+[32m+[m
+[32m+[m[32mexport template <typename T, typename = std::enable_if<std::is_enum_v<T>>>[m
+[32m+[m[32mtypename Flags<T>::underlying_type operator&(T o, Flags<T> &flags) {[m
+[32m+[m[32m    return flags & o;[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32mexport template <typename T, typename = std::enable_if<std::is_enum_v<T>>>[m
+[32m+[m[32mtypename Flags<T>::underlying_type operator|(T o, Flags<T> &flags) {[m
+[32m+[m[32m    return flags | o;[m
+[32m+[m[32m}[m
+[1mdiff --git a/game/src/module/gameobject.cppm b/game/src/module/gameobject.cppm[m
+[1mdeleted file mode 100644[m
+[1mindex 516fac4..0000000[m
+[1m--- a/game/src/module/gameobject.cppm[m
+[1m+++ /dev/null[m
+[36m@@ -1,19 +0,0 @@[m
+[31m-module;[m
+[31m-export module gameobject;[m
+[31m-[m
+[31m-import sprite;[m
+[31m-import math;[m
+[31m-[m
+[31m-import std;[m
+[31m-[m
+[31m-export struct GameObject {[m
+[31m-    Pose m_pose;[m
+[31m-    Sprite m_sprite;[m
+[31m-[m
+[31m-    std ::vector<GameObject> m_children;[m
+[31m-[m
+[31m-    const Pose& GetGlobalPose() const { return m_global_pose; }[m
+[31m-[m
+[31m-private:[m
+[31m-    Pose m_global_pose;[m
+[31m-};[m
+[1mdiff --git a/game/src/module/image.cppm b/game/src/module/image.cppm[m
+[1mindex fddd273..4bdd424 100644[m
+[1m--- a/game/src/module/image.cppm[m
+[1m+++ b/game/src/module/image.cppm[m
+[36m@@ -21,8 +21,11 @@[m [mpublic:[m
+ [m
+     SDL_Texture *GetTexture() const;[m
+ [m
+[32m+[m[32m    const Path &filename() const;[m
+[32m+[m
+ private:[m
+     SDL_Texture *m_texture{};[m
+[32m+[m[32m    Path m_filename;[m
+ };[m
+ [m
+ export class ImageManager {[m
+[1mdiff --git a/game/src/module/inspector.cppm b/game/src/module/inspector.cppm[m
+[1mindex 27208c9..8fda616 100644[m
+[1m--- a/game/src/module/inspector.cppm[m
+[1m+++ b/game/src/module/inspector.cppm[m
+[36m@@ -2,10 +2,11 @@[m [mmodule;[m
+ union SDL_Event;[m
+ export module inspector;[m
+ [m
+[31m-import std;[m
+[31m-[m
+ import window;[m
+ import renderer;[m
+[32m+[m[32mimport entity;[m
+[32m+[m
+[32m+[m[32mimport std;[m
+ [m
+ export class Inspector {[m
+ public:[m
+[36m@@ -21,4 +22,11 @@[m [mpublic:[m
+ private:[m
+     Window& m_window;[m
+     Renderer& m_renderer;[m
+[32m+[m[32m    bool m_hierarchy_window_open = true;[m
+[32m+[m[32m    bool m_detail__window_open = true;[m
+[32m+[m
+[32m+[m[32m    std::optional<Entity> m_selected_entity;[m
+[32m+[m
+[32m+[m[32m    void showEntityHierarchy(Entity entity);[m
+[32m+[m[32m    void showEntityDetail(Entity entity)[m
+ };[m
+[1mdiff --git a/game/src/module/relationship.cppm b/game/src/module/relationship.cppm[m
+[1mindex dc3eed3..0382bf0 100644[m
+[1m--- a/game/src/module/relationship.cppm[m
+[1m+++ b/game/src/module/relationship.cppm[m
+[36m@@ -1,5 +1,7 @@[m
+ module;[m
+ export module relationship;[m
+[32m+[m[32mexport import :type;[m
+[32m+[m[32mexport import :serialize;[m
+ [m
+ import entity;[m
+ import manager;[m
+[36m@@ -7,10 +9,6 @@[m [mimport transform;[m
+ [m
+ import std;[m
+ [m
+[31m-export struct Relationship {[m
+[31m-    std::vector<Entity> m_children;[m
+[31m-};[m
+[31m-[m
+ export class RelationshipManager : public ComponentManager<Relationship> {[m
+ public:[m
+     RelationshipManager(Entity entity);[m
+[1mdiff --git a/game/src/module/renderer.cppm b/game/src/module/renderer.cppm[m
+[1mindex 1c268c0..bb6596e 100644[m
+[1m--- a/game/src/module/renderer.cppm[m
+[1m+++ b/game/src/module/renderer.cppm[m
+[36m@@ -3,17 +3,12 @@[m [mmodule;[m
+ export module renderer;[m
+ [m
+ import flag;[m
+[32m+[m[32mimport flip;[m
+ import window;[m
+ [m
+ import math;[m
+ import image;[m
+ [m
+[31m-export enum class Flip {[m
+[31m-    None = 0,[m
+[31m-    Horizontal = 1,[m
+[31m-    Vertical = 2,[m
+[31m-};[m
+[31m-[m
+ export class Renderer {[m
+ public:[m
+     Renderer(Window& window);[m
+[1mdiff --git a/game/src/module/sprite.cppm b/game/src/module/sprite.cppm[m
+[1mindex 7f17e49..c5f961f 100644[m
+[1m--- a/game/src/module/sprite.cppm[m
+[1m+++ b/game/src/module/sprite.cppm[m
+[36m@@ -1,20 +1,10 @@[m
+ module;[m
+ export module sprite;[m
+ [m
+[31m-import flag;[m
+[31m-import image;[m
+[31m-import math;[m
+[31m-import renderer;[m
+[31m-import manager;[m
+[31m-[m
+[31m-export struct Sprite {[m
+[31m-    Image* m_image{};[m
+[31m-    Region m_region;[m
+[31m-    Vec2 m_size;[m
+[31m-    Flags<Flip> m_flip = Flip::None;[m
+[32m+[m[32mexport import :type;[m
+[32m+[m[32mexport import :serialize;[m
+ [m
+[31m-    operator bool() const { return m_image; }[m
+[31m-};[m
+[32m+[m[32mimport manager;[m
+ [m
+ export class SpriteManager : public ComponentManager<Sprite> {[m
+ public:[m
+[1mdiff --git a/game/src/module/storage.cppm b/game/src/module/storage.cppm[m
+[1mindex 14b6072..e7165e9 100644[m
+[1m--- a/game/src/module/storage.cppm[m
+[1m+++ b/game/src/module/storage.cppm[m
+[36m@@ -25,7 +25,8 @@[m [mpublic:[m
+                                                     bool advance_mode = false);[m
+ [m
+     std::size_t GetSize() const;[m
+[31m-    std::vector<char> ReadData() const;[m
+[32m+[m[32m    std::vector<char> Read() const;[m
+[32m+[m[32m    void Write(const char* data, std::size_t size);[m
+     ~IOStream();[m
+ [m
+ private:[m
+[1mdiff --git a/game/src/module/type/math.cppm b/game/src/module/type/math.cppm[m
+[1mindex cdee54f..9511dfe 100644[m
+[1m--- a/game/src/module/type/math.cppm[m
+[1m+++ b/game/src/module/type/math.cppm[m
+[36m@@ -91,7 +91,7 @@[m [mstruct Region {[m
+ struct Pose {[m
+     Vec2 m_position;[m
+     Degrees m_rotation;[m
+[31m-    float m_scale{1.0};[m
+[32m+[m[32m    Vec2 m_scale{1.0, 1.0};[m
+ [m
+     Pose operator*(const Pose& o) const;[m
+ };[m
+[1mdiff --git a/game/tools/schema_parser/generate.cpp b/game/tools/schema_parser/generate.cpp[m
+[1mindex d20e132..1d1257d 100644[m
+[1m--- a/game/tools/schema_parser/generate.cpp[m
+[1m+++ b/game/tools/schema_parser/generate.cpp[m
+[36m@@ -64,6 +64,21 @@[m [mstd::string generateEnumCode(const EnumInfo& info) {[m
+ [m
+ namespace cpp {[m
+ [m
+[32m+[m[32mstd::string generateSerializeCode(const EnumInfo& info) {[m
+[32m+[m[32m    kainjow::mustache::data field_datas{kainjow::mustache::data::type::list};[m
+[32m+[m[32m    for (size_t i = 0; i < info.fields.size(); i++) {[m
+[32m+[m[32m        auto& field = info.fields[i];[m
+[32m+[m[32m        kainjow::mustache::data field_data;[m
+[32m+[m[32m        field_data.set("name", field.name);[m
+[32m+[m[32m        field_data.set("not_end", i != info.fields.size() - 1);[m
+[32m+[m[32m        field_datas << field_data;[m
+[32m+[m[32m    }[m
+[32m+[m[32m    kainjow::mustache::data serialize_data;[m
+[32m+[m[32m    serialize_data.set("type", info.name);[m
+[32m+[m[32m    serialize_data.set("fields", field_datas);[m
+[32m+[m[32m    auto& serialize_mustache = MustacheManager::GetInst().cpp_serialize;[m
+[32m+[m[32m    return serialize_mustache.render(serialize_data);[m
+[32m+[m[32m}[m
+ std::string generateSerializeCode(const ClassInfo& info) {[m
+     kainjow::mustache::data field_datas{kainjow::mustache::data::type::list};[m
+     for (size_t i = 0; i < info.fields.size(); i++) {[m
+[1mdiff --git a/game/tools/schema_parser/generate.cppm b/game/tools/schema_parser/generate.cppm[m
+[1mindex 97d9bc8..e6d98d1 100644[m
+[1m--- a/game/tools/schema_parser/generate.cppm[m
+[1m+++ b/game/tools/schema_parser/generate.cppm[m
+[36m@@ -12,6 +12,7 @@[m [mstd::string generateEnumCode(const EnumInfo& info);[m
+ [m
+ namespace cpp {[m
+ [m
+[32m+[m[32mstd::string generateSerializeCode(const EnumInfo& info);[m
+ std::string generateSerializeCode(const ClassInfo& info);[m
+ std::string generateSchemaCode(const SchemaInfo& schema_info);[m
+ }  // namespace cpp[m

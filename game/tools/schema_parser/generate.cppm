@@ -12,6 +12,7 @@ std::string generateEnumCode(const EnumInfo& info);
 
 namespace cpp {
 
+std::string generateSerializeCode(const EnumInfo& info);
 std::string generateSerializeCode(const ClassInfo& info);
 std::string generateSchemaCode(const SchemaInfo& schema_info);
 }  // namespace cpp

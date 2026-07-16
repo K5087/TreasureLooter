@@ -16,11 +16,11 @@ public:
     Flags(const Flags &) = default;
     Flags(Flags &&) = default;
 
-    Flags operator|(T o) const {
+    underlying_type operator|(T o) const {
         return Flags(m_value | static_cast<underlying_type>(o));
     }
 
-    Flags operator&(T o) const {
+    underlying_type operator&(T o) const {
         return Flags(m_value & static_cast<underlying_type>(o));
     }
 
@@ -43,10 +43,22 @@ public:
 
     Flags operator~() const noexcept { return ~m_value; }
 
+    void Remove(T o) { m_value &= ~static_cast<underlying_type>(o); }
+
     operator T() const { return static_cast<T>(m_value); }
 
-    operator underlying_type() const { return m_value; }
+    underlying_type Value() const { return m_value; }
 
 private:
     underlying_type m_value{};
 };
+
+export template <typename T, typename = std::enable_if<std::is_enum_v<T>>>
+typename Flags<T>::underlying_type operator&(T o, Flags<T> &flags) {
+    return flags & o;
+}
+
+export template <typename T, typename = std::enable_if<std::is_enum_v<T>>>
+typename Flags<T>::underlying_type operator|(T o, Flags<T> &flags) {
+    return flags | o;
+}

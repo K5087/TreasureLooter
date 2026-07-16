@@ -40,13 +40,13 @@ public:
     std::unique_ptr<TransformManager> m_transform_manager;
     std::unique_ptr<SpriteManager> m_sprite_manager;
 
+    Entity GetRootEntity();
+
 private:
     static std::unique_ptr<Context> instance;
     bool m_should_exit = false;
     Entity m_last_entity = 0;
     Entity m_root_entity;
-
-    GameObject m_root;
 
     Context();
 

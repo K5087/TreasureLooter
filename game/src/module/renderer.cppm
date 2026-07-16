@@ -3,16 +3,11 @@ module;
 export module renderer;
 
 import flag;
+import flip;
 import window;
 
 import math;
 import image;
-
-export enum class Flip {
-    None = 0,
-    Horizontal = 1,
-    Vertical = 2,
-};
 
 export class Renderer {
 public:

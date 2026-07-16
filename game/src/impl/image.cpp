@@ -10,11 +10,12 @@ import renderer;
 import storage;
 import log;
 
-Image::Image(SDL_Renderer &renderer, const Path &filename) {
+Image::Image(SDL_Renderer &renderer, const Path &filename)
+    : m_filename(filename) {
     int w, h;
 
     auto file = IOStream::CreateFromFile(filename, IOMode::Read, true);
-    auto content = file->ReadData();
+    auto content = file->Read();
 
     stbi_uc *data =
         stbi_load_from_memory((const stbi_uc *)content.data(), content.size(),
@@ -57,6 +58,10 @@ Vec2 Image::GetSize() const {
 
 SDL_Texture *Image::GetTexture() const {
     return m_texture;
+}
+
+const Path &Image::Filename() const {
+    return m_filename;
 }
 
 ImageManager::ImageManager(SDL_Renderer &renderer) : m_renderer(renderer) {}

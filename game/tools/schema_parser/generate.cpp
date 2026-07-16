@@ -64,6 +64,21 @@ std::string generateEnumCode(const EnumInfo& info) {
 
 namespace cpp {
 
+std::string generateSerializeCode(const EnumInfo& info) {
+    kainjow::mustache::data field_datas{kainjow::mustache::data::type::list};
+    for (size_t i = 0; i < info.fields.size(); i++) {
+        auto& field = info.fields[i];
+        kainjow::mustache::data field_data;
+        field_data.set("name", field.name);
+        field_data.set("not_end", i != info.fields.size() - 1);
+        field_datas << field_data;
+    }
+    kainjow::mustache::data serialize_data;
+    serialize_data.set("type", info.name);
+    serialize_data.set("fields", field_datas);
+    auto& serialize_mustache = MustacheManager::GetInst().cpp_serialize;
+    return serialize_mustache.render(serialize_data);
+}
 std::string generateSerializeCode(const ClassInfo& info) {
     kainjow::mustache::data field_datas{kainjow::mustache::data::type::list};
     for (size_t i = 0; i < info.fields.size(); i++) {
