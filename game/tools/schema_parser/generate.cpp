@@ -65,20 +65,30 @@ std::string generateEnumCode(const EnumInfo& info) {
 namespace cpp {
 
 std::string generateSerializeCode(const EnumInfo& info) {
-    kainjow::mustache::data field_datas{kainjow::mustache::data::type::list};
-    for (size_t i = 0; i < info.fields.size(); i++) {
-        auto& field = info.fields[i];
-        kainjow::mustache::data field_data;
-        field_data.set("name", field.name);
-        field_data.set("not_end", i != info.fields.size() - 1);
-        field_datas << field_data;
-    }
     kainjow::mustache::data serialize_data;
+    kainjow::mustache::data item_datas{kainjow::mustache::data::type::list};
+    kainjow::mustache::data no_zero_item_datas{kainjow::mustache::data::type::list};
+    for (size_t i = 0; i < info.items.size(); i++) {
+        auto& item = info.items[i];
+        kainjow::mustache::data item_data;
+        item_data.set("name", item.name);
+        item_data.set("type", info.name);
+        item_data.set("not_first", i != 0);
+        item_datas << item_data;
+        if (item.value == 0) {
+            serialize_data.set("zero_name", item.name);
+            serialize_data.set("is_zero", true);
+        }else{
+            no_zero_item_datas<<item_data;
+        }
+    }
     serialize_data.set("type", info.name);
-    serialize_data.set("fields", field_datas);
-    auto& serialize_mustache = MustacheManager::GetInst().cpp_serialize;
+    serialize_data.set("fields", item_datas);
+    serialize_data.set("no_zero_fields", no_zero_item_datas);
+    auto& serialize_mustache = MustacheManager::GetInst().cpp_enum_serialize;
     return serialize_mustache.render(serialize_data);
 }
+
 std::string generateSerializeCode(const ClassInfo& info) {
     kainjow::mustache::data field_datas{kainjow::mustache::data::type::list};
     for (size_t i = 0; i < info.fields.size(); i++) {
@@ -91,7 +101,7 @@ std::string generateSerializeCode(const ClassInfo& info) {
     kainjow::mustache::data serialize_data;
     serialize_data.set("type", info.name);
     serialize_data.set("fields", field_datas);
-    auto& serialize_mustache = MustacheManager::GetInst().cpp_serialize;
+    auto& serialize_mustache = MustacheManager::GetInst().cpp_class_serialize;
     return serialize_mustache.render(serialize_data);
 }
 
@@ -102,11 +112,16 @@ std::string generateSchemaCode(const SchemaInfo& schema_info) {
         serialize_datas << kainjow::mustache::data{
             "serialize", generateSerializeCode(schema)};
     }
+    for (auto& schema : schema_info.enums) {
+        serialize_datas << kainjow::mustache::data{
+            "serialize", generateSerializeCode(schema)};
+    }
 
     auto& schema_mustache = MustacheManager::GetInst().cpp_schema;
     kainjow::mustache::data schema_data;
     schema_data.set("serializes", serialize_datas);
     schema_data.set("name", schema_info.filename.stem().string());
+    schema_data.set("has_enum", schema_info.enums.size() > 0);
     return schema_mustache.render(schema_data);
 }
 }  // namespace cpp

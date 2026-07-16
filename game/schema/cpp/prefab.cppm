@@ -3,7 +3,7 @@
 /////////////////////////////////////////////////////////////////////
 
 module;
-export module transform:serialize;
+export module prefab:serialize;
 
 import :type;
 import simdjson;
@@ -13,25 +13,30 @@ import std;
 export namespace simdjson{
 
 template <typename builder_type>
-void tag_invoke(serialize_tag, builder_type& builder,const Transform& payload){
+void tag_invoke(serialize_tag, builder_type& builder,const Prefab& payload){
     builder.start_object();
-    builder.template append_key_value<"m_pose">(payload.m_pose);
+    builder.template append_key_value<"m_sprite">(payload.m_sprite);
     builder.append_comma();
-    builder.template append_key_value<"m_global_pose">(payload.m_global_pose);
+    builder.template append_key_value<"m_transform">(payload.m_transform);
+    builder.append_comma();
+    builder.template append_key_value<"m_relation">(payload.m_relation);
     builder.end_object();
 }
 
 template<typename simdjson_value>
-auto tag_invoke(deserialize_tag,simdjson_value& val,Transform& payload){
+auto tag_invoke(deserialize_tag,simdjson_value& val,Prefab& payload){
     ondemand::object obj;
     auto error = val.get_object().get(obj);
     if(error){
         return error;
     }
-    if((error=obj["m_pose"].get(payload.m_pose))){
+    if((error=obj["m_sprite"].get(payload.m_sprite))){
         return error;
     }
-    if((error=obj["m_global_pose"].get(payload.m_global_pose))){
+    if((error=obj["m_transform"].get(payload.m_transform))){
+        return error;
+    }
+    if((error=obj["m_relation"].get(payload.m_relation))){
         return error;
     }
     return simdjson::SUCCESS;

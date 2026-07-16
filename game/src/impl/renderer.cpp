@@ -50,21 +50,20 @@ void Renderer::DrawImage(const Image& image, const Region& src,
     SDL_FRect src_rect, dst_rect;
     src_rect.x = src.m_topleft.x;
     src_rect.y = src.m_topleft.y;
-    src_rect.w = src.m_szie.w;
-    src_rect.h = src.m_szie.h;
+    src_rect.w = src.m_size.w;
+    src_rect.h = src.m_size.h;
 
     dst_rect.x = dst.m_topleft.x;
     dst_rect.y = dst.m_topleft.y;
-    dst_rect.w = dst.m_szie.w;
-    dst_rect.h = dst.m_szie.h;
+    dst_rect.w = dst.m_size.w;
+    dst_rect.h = dst.m_size.h;
 
     SDL_FPoint sdl_center;
     sdl_center.x = center.x;
     sdl_center.y = center.y;
-    SDL_CALL(SDL_RenderTextureRotated(
-        m_renderer, image.GetTexture(), &src_rect, &dst_rect, rotation.Value(),
-        &sdl_center,
-        static_cast<SDL_FlipMode>(flip.Value()));
+    SDL_CALL(SDL_RenderTextureRotated(m_renderer, image.GetTexture(), &src_rect,
+                                      &dst_rect, rotation.Value(), &sdl_center,
+                                      static_cast<SDL_FlipMode>(flip.Value())));
 }
 
 void Renderer::Clear() {

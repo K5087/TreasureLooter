@@ -7,8 +7,101 @@ export module flip:serialize;
 
 import :type;
 import simdjson;
+import std;
+import flag;
 
 export namespace simdjson{
 
+template <typename builder_type>
+void tag_invoke(serialize_tag, builder_type& builder,const Flip& payload){
+    switch (payload) {
+    case Flip::None:
+        builder.append("None");
+        break;
+    case Flip::Horizontal:
+        builder.append("Horizontal");
+        break;
+    case Flip::Vertical:
+        builder.append("Vertical");
+        break;
+    }
+}
+
+template<typename simdjson_value>
+auto tag_invoke(deserialize_tag,simdjson_value& val,Flip& payload){
+    std::string_view value;
+
+    auto error = val.get_string().get(value);
+    if (error) {
+        return error;
+    }
+
+    if (value == "None") {
+        payload = Flip::None;
+        return simdjson::SUCCESS;
+    }
+    if (value == "Horizontal") {
+        payload = Flip::Horizontal;
+        return simdjson::SUCCESS;
+    }
+    if (value == "Vertical") {
+        payload = Flip::Vertical;
+        return simdjson::SUCCESS;
+    }
+
+    return simdjson::INCORRECT_TYPE;
+}
+
+template <typename builder_type>
+void tag_invoke(serialize_tag, builder_type& builder,const Flags<Flip>& payload){
+    builder.start_array();
+    if(payload.Value()==0){
+        builder.append("None");
+    }
+    builder.append_comma();
+    if (payload & Flip::Horizontal){
+        builder.append("Horizontal");
+    }
+    builder.append_comma();
+    if (payload & Flip::Vertical){
+        builder.append("Vertical");
+    }
+    builder.end_array();
+}
+
+template<typename simdjson_value>
+auto tag_invoke(deserialize_tag,simdjson_value& val,Flags<Flip>& payload){
+    simdjson::ondemand::array values;
+
+    auto error = val.get_array().get(values);
+    if (error) {
+        return error;
+    }
+    payload  = {};
+
+    for(auto item:values){
+        std::string_view value;
+        if(auto error = item.get_string().get(value)){
+            return error;
+        }
+        bool match = false;
+        if (value == "None") {
+            payload |= Flip::None;
+            match = true;
+        }
+        if (value == "Horizontal") {
+            payload |= Flip::Horizontal;
+            match = true;
+        }
+        if (value == "Vertical") {
+            payload |= Flip::Vertical;
+            match = true;
+        }
+        if (!match) {
+            return simdjson::INCORRECT_TYPE;
+        }
+    }
+    return simdjson::SUCCESS;
+}
 
 }

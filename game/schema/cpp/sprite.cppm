@@ -7,11 +7,13 @@ export module sprite:serialize;
 
 import :type;
 import simdjson;
+import std;
+import flip;
 
-export namespace simdjson{
+export namespace simdjson {
 
 template <typename builder_type>
-void tag_invoke(serialize_tag, builder_type& builder,const Sprite& payload){
+void tag_invoke(serialize_tag, builder_type& builder, const Sprite& payload) {
     builder.start_object();
     builder.template append_key_value<"m_image">(payload.m_image);
     builder.append_comma();
@@ -23,26 +25,26 @@ void tag_invoke(serialize_tag, builder_type& builder,const Sprite& payload){
     builder.end_object();
 }
 
-template<typename simdjson_value>
-auto tag_invoke(deserialize_tag,simdjson_value& val,Sprite& payload){
-ondemand::object obj;
+template <typename simdjson_value>
+auto tag_invoke(deserialize_tag, simdjson_value& val, Sprite& payload) {
+    ondemand::object obj;
     auto error = val.get_object().get(obj);
-    if(error){
+    if (error) {
         return error;
     }
-    if((error=obj["m_image"].get(payload.m_image))){
+    if ((error = obj["m_image"].get(payload.m_image))) {
         return error;
     }
-    if((error=obj["m_region"].get(payload.m_region))){
+    if ((error = obj["m_region"].get(payload.m_region))) {
         return error;
     }
-    if((error=obj["m_size"].get(payload.m_size))){
+    if ((error = obj["m_size"].get(payload.m_size))) {
         return error;
     }
-    if((error=obj["m_flip"].get(payload.m_flip))){
+    if ((error = obj["m_flip"].get(payload.m_flip))) {
         return error;
     }
     return simdjson::SUCCESS;
 }
 
-}
+}  // namespace simdjson

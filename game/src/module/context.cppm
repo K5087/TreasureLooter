@@ -2,7 +2,6 @@ module;
 union SDL_Event;
 export module context;
 
-import gameobject;
 import window;
 import renderer;
 import image;

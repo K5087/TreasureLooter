@@ -85,7 +85,8 @@ private:
 };
 
 struct Region {
-    Vec2 m_topleft, m_szie;
+    Vec2 m_topleft;
+    Vec2 m_size;
 };
 
 struct Pose {

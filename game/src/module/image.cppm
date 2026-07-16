@@ -5,10 +5,12 @@ export module image;
 
 import path;
 import math;
+import simdjson;
+import log;
 
 import std;
-
-export class Image {
+export {
+class Image {
 public:
     Image(SDL_Renderer &renderer, const Path &filename);
     Image(Image &&) = delete;
@@ -21,14 +23,14 @@ public:
 
     SDL_Texture *GetTexture() const;
 
-    const Path &filename() const;
+    const Path &Filename() const;
 
 private:
     SDL_Texture *m_texture{};
     Path m_filename;
 };
 
-export class ImageManager {
+class ImageManager {
 public:
     explicit ImageManager(SDL_Renderer &renderer);
 
@@ -41,3 +43,31 @@ private:
 
     SDL_Renderer &m_renderer;
 };
+
+Image *LoadImage(const Path &filename);
+
+namespace simdjson {
+template <typename builder_type>
+void tag_invoke(serialize_tag, builder_type &builder, const Image *payload) {
+    std::string path = payload->Filename().string();
+    builder.append(simdjson::pad(path));
+}
+
+template <typename simdjson_value>
+auto tag_invoke(deserialize_tag, simdjson_value &val, Image *&payload) {
+    std::string_view value;
+    auto error = val.get_string().get(value);
+    if (error) {
+        return error;
+    }
+
+    payload = LoadImage(value);
+    if (!payload) {
+        LOGE("Failed to load image: {}", value);
+        return simdjson::SUCCESS;
+    }
+
+    return simdjson::SUCCESS;
+}
+}  // namespace simdjson
+}

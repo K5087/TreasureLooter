@@ -18,6 +18,7 @@ namespace SIMDJSON_BUILTIN_IMPLEMENTATION {
 namespace ondemand {
 using ::simdjson::ondemand::object;
 using ::simdjson::ondemand::parser;
+using ::simdjson::ondemand::array;
 
 using ::simdjson::ondemand::document;
 }  // namespace ondemand

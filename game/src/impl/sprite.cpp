@@ -15,12 +15,12 @@ void SpriteManager::Update() {
             continue;
         }
         auto& global_pose = trnasform->m_global_pose;
-        auto image_size = sprite->m_region.m_szie;
+        auto image_size = sprite->m_region.m_size;
         dst_region.m_topleft = global_pose.m_position - image_size * 0.5;
-        dst_region.m_szie = sprite->m_size * global_pose.m_scale;
+        dst_region.m_size = sprite->m_size * global_pose.m_scale;
 
         renderer->DrawImage(*sprite->m_image, src_region, dst_region,
                             global_pose.m_rotation.Value(),
-                            dst_region.m_szie * 0.5, sprite->m_flip);
+                            dst_region.m_size * 0.5, sprite->m_flip);
     }
 }

@@ -6,6 +6,7 @@ import imgui_id_generator;
 import std;
 import math;
 import image;
+import flip;
 
 export {
 void InstanceDisplay(const char* name, int& value);

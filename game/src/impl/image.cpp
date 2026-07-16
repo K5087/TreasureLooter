@@ -9,6 +9,7 @@ import math;
 import renderer;
 import storage;
 import log;
+import context;
 
 Image::Image(SDL_Renderer &renderer, const Path &filename)
     : m_filename(filename) {
@@ -89,4 +90,14 @@ Image *ImageManager::Find(const Path &filename) {
 
 bool ImageManager::IsExists(const Path &filename) {
     return Find(filename);
+}
+
+Image *LoadImage(const Path &filename) {
+    auto &image_manager = Context::GetInst().m_image_manager;
+    Image *image = image_manager->Find(filename);
+
+    if (!image && !filename.empty()) {
+        image = image_manager->Load(filename);
+    }
+    return image;
 }

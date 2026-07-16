@@ -10,6 +10,8 @@ import renderer;
 import window;
 import math;
 import serialize;
+import asset;
+import prefab;
 
 import log;
 
@@ -69,7 +71,7 @@ void Context::Update() {
     //     executed = true;
     // }
     /////////////////////////////////////
-    logicUpdate();
+
     renderUpdate();
 }
 
@@ -107,6 +109,20 @@ Context::Context() {
     m_relation_manager = std::make_unique<RelationshipManager>(m_root_entity);
 
     m_transform_manager->RegisterEntity(m_root_entity);
+
+    Prefab prefab;
+    prefab.m_sprite.m_image =
+        m_image_manager->Load("assets/Characters/Statue/SpriteSheet.png");
+    prefab.m_sprite.m_region.m_size =
+        prefab.m_sprite.m_image->GetSize() / Vec2{4, 7};
+    prefab.m_sprite.m_region.m_size = prefab.m_sprite.m_region.m_size * 3;
+    prefab.m_transform.m_pose.m_position = {200, 300};
+    prefab.m_transform.m_pose.m_scale = {1.0, 1.0};
+    prefab.m_transform.m_pose.m_rotation = 0.0;
+prefab.m_transform.m_global_pose.m_position = {0.0, 0.0};    prefab.m_transform.m_global_pose.m_scale = {1.0, 1.0};
+    prefab.m_transform.m_global_pose.m_rotation = 0.0;
+
+    std::cout << Serialize(prefab)<<std::endl;
 }
 
 void Context::logicUpdate() {

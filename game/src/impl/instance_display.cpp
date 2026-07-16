@@ -1,8 +1,11 @@
+module;
+#include <imgui.h>
 module instance_display;
 
 import std;
 import math;
 import image;
+import flip;
 
 void InstanceDisplay(const char* name, int& value) {
     ImGui::PushID(ImGuiIDGenerator::Gen());

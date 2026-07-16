@@ -37,6 +37,7 @@
 
 ---@class Region
 ---@field m_topleft Vec2
+---@field m_size Vec2
 
 
 ---@class Pose

@@ -28,5 +28,5 @@ private:
     std::optional<Entity> m_selected_entity;
 
     void showEntityHierarchy(Entity entity);
-    void showEntityDetail(Entity entity)
+    void showEntityDetail(Entity entity);
 };

@@ -17,8 +17,10 @@ MustacheManager::MustacheManager()
       lua_schema(
           readMustache("tools/schema_parser/template/lua/schema.mustache")),
       lua_enum(readMustache("tools/schema_parser/template/lua/enum.mustache")),
-      cpp_serialize(
-          readMustache("tools/schema_parser/template/cpp/serialize.mustache")),
+      cpp_class_serialize(readMustache(
+          "tools/schema_parser/template/cpp/class_serialize.mustache")),
+      cpp_enum_serialize(readMustache(
+          "tools/schema_parser/template/cpp/enum_serialize.mustache")),
       cpp_schema(
           readMustache("tools/schema_parser/template/cpp/schema.mustache"))
 
