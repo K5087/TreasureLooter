@@ -42,4 +42,29 @@ auto tag_invoke(deserialize_tag,simdjson_value& val,Prefab& payload){
     return simdjson::SUCCESS;
 }
 
+template <typename builder_type>
+void tag_invoke(serialize_tag, builder_type& builder,const EntityInstance& payload){
+    builder.start_object();
+    builder.template append_key_value<"m_entity">(payload.m_entity);
+    builder.append_comma();
+    builder.template append_key_value<"m_data">(payload.m_data);
+    builder.end_object();
+}
+
+template<typename simdjson_value>
+auto tag_invoke(deserialize_tag,simdjson_value& val,EntityInstance& payload){
+    ondemand::object obj;
+    auto error = val.get_object().get(obj);
+    if(error){
+        return error;
+    }
+    if((error=obj["m_entity"].get(payload.m_entity))){
+        return error;
+    }
+    if((error=obj["m_data"].get(payload.m_data))){
+        return error;
+    }
+    return simdjson::SUCCESS;
+}
+
 }

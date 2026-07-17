@@ -12,6 +12,7 @@ import math;
 import serialize;
 import asset;
 import prefab;
+import path;
 
 import log;
 
@@ -49,27 +50,29 @@ Context::~Context() {
 
 void Context::Update() {
     ///////// this is a test /////////////
-    // static bool executed = false;
-    // if (!executed) {
-    //     auto prefab = LoadEntityInstanceAsset("assets/gpa/waggo.entity.xml");
-    //     if (prefab.m_data.m_transform) {
-    //         m_transform_manager->RegisterEntity(
-    //             prefab.m_eneity, prefab.m_data.m_transform.value());
-    //     }
-    //     if (prefab.m_data.m_sprite) {
-    //         m_sprite_manager->RegisterEntity(prefab.m_entity,
-    //                                          prefab.m_data.m_sprite.value());
-    //     }
-    //     if (prefab.m_data.m_relationship) {
-    //         m_relation_manager->RegisterEntity(
-    //             prefab.m_entity, prefab.m_data.m_relationship.value());
-    //     }
-    //
-    //     m_relation_manager->Get(m_root_entity)
-    //         ->m_children.push_back(prefab.m_entity);
-    //
-    //     executed = true;
-    // }
+    static bool executed = false;
+    if (!executed) {
+        EntityInstance prefab =
+            LoadAsset<EntityInstance>(Path("assets/gpa/waggo.entity.json"));
+        if (prefab.m_data.m_transform) {
+            m_transform_manager->RegisterEntity(
+                prefab.m_entity, prefab.m_data.m_transform.value());
+        }
+        if (prefab.m_data.m_sprite) {
+            m_sprite_manager->RegisterEntity(prefab.m_entity,
+                                             prefab.m_data.m_sprite.value());
+        }
+        if (prefab.m_data.m_relation) {
+            m_relation_manager->RegisterEntity(
+                prefab.m_entity, prefab.m_data.m_relation.value());
+        }
+
+        m_relation_manager->Get(m_root_entity)
+            ->m_children.push_back(prefab.m_entity);
+
+        executed = true;
+        std::cout << Serialize(prefab) << std::endl;
+    }
     /////////////////////////////////////
 
     renderUpdate();
@@ -109,20 +112,6 @@ Context::Context() {
     m_relation_manager = std::make_unique<RelationshipManager>(m_root_entity);
 
     m_transform_manager->RegisterEntity(m_root_entity);
-
-    Prefab prefab;
-    prefab.m_sprite.m_image =
-        m_image_manager->Load("assets/Characters/Statue/SpriteSheet.png");
-    prefab.m_sprite.m_region.m_size =
-        prefab.m_sprite.m_image->GetSize() / Vec2{4, 7};
-    prefab.m_sprite.m_region.m_size = prefab.m_sprite.m_region.m_size * 3;
-    prefab.m_transform.m_pose.m_position = {200, 300};
-    prefab.m_transform.m_pose.m_scale = {1.0, 1.0};
-    prefab.m_transform.m_pose.m_rotation = 0.0;
-prefab.m_transform.m_global_pose.m_position = {0.0, 0.0};    prefab.m_transform.m_global_pose.m_scale = {1.0, 1.0};
-    prefab.m_transform.m_global_pose.m_rotation = 0.0;
-
-    std::cout << Serialize(prefab)<<std::endl;
 }
 
 void Context::logicUpdate() {

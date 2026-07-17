@@ -44,7 +44,10 @@ struct MustacheManager {
     kainjow::mustache::mustache lua_enum;
     kainjow::mustache::mustache cpp_class_serialize;
     kainjow::mustache::mustache cpp_enum_serialize;
-    kainjow::mustache::mustache cpp_schema;
+    kainjow::mustache::mustache cpp_schema_serialize;
+    kainjow::mustache::mustache cpp_enum_display;
+    kainjow::mustache::mustache cpp_class_display;
+    kainjow::mustache::mustache cpp_schema_display;
 
     static MustacheManager& GetInst();
 

@@ -23,15 +23,19 @@ endif()
 set(SCHEMA_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src/module/type)
 file(GLOB_RECURSE TYPES ${SCHEMA_DIR}/*.cppm)
 file(GLOB_RECURSE MUSTACHES ./tools/schema_parser/template/*.mustache)
-set(SCHEMA_OUTPUT_PATH "schema/")
+set(SCHEMA_OUTPUT_PATH "${CMAKE_CURRENT_SOURCE_DIR}/schema/")
 set(SCHEMA_OUTPUT_FILES)
+set(schema_lua_path "${SCHEMA_OUTPUT_PATH}/lua")
+set(schema_cpp_path "${SCHEMA_OUTPUT_PATH}/cpp")
 foreach(schema ${TYPES})
     cmake_path(GET schema FILENAME schema_filename)
     cmake_path(REPLACE_EXTENSION schema_filename ".lua" OUTPUT_VARIABLE schema_generate_lua)
     cmake_path(REPLACE_EXTENSION schema_filename ".cppm" OUTPUT_VARIABLE schema_generate_cppm)
-    set(schema_lua_path "${CMAKE_CURRENT_SOURCE_DIR}/${SCHEMA_OUTPUT_PATH}/lua/${schema_generate_lua}")
-    set(schema_cpp_path "${CMAKE_CURRENT_SOURCE_DIR}/${SCHEMA_OUTPUT_PATH}/cpp/${schema_generate_cppm}")
-    list(APPEND SCHEMA_OUTPUT_FILES ${schema_lua_path} ${schema_cpp_path})
+    list(APPEND SCHEMA_OUTPUT_FILES
+        ${schema_lua_path}/${schema_generate_lua}
+        ${schema_cpp_path}/serialize/${schema_generate_cppm}
+        ${schema_cpp_path}/display/${schema_generate_cppm}
+    )
 endforeach()
 
 add_custom_command(OUTPUT ${SCHEMA_OUTPUT_FILES}

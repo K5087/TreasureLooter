@@ -11,9 +11,18 @@ std::string generateEnumCode(const EnumInfo& info);
 }  // namespace lua
 
 namespace cpp {
+namespace serialize {
+std::string generate(const EnumInfo& info);
+std::string generate(const ClassInfo& info);
+std::string generate(const SchemaInfo& info);
 
-std::string generateSerializeCode(const EnumInfo& info);
-std::string generateSerializeCode(const ClassInfo& info);
-std::string generateSchemaCode(const SchemaInfo& schema_info);
+}  // namespace serialize
+
+namespace display {
+std::string generate(const EnumInfo& info);
+std::string generate(const ClassInfo& info);
+std::string generate(const SchemaInfo& info);
+}  // namespace display
+
 }  // namespace cpp
 }

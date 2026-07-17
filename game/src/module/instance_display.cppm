@@ -34,6 +34,7 @@ void InstanceDisplay(const char* name, const double& value);
 void InstanceDisplay(const char* name, std::string& value);
 void InstanceDisplay(const char* name, const std::string& value);
 void InstanceDisplay(const char* name, std::string_view value);
+
 void InstanceDisplay(const char* name, Vec2& value);
 void InstanceDisplay(const char* name, const Vec2& value);
 void InstanceDisplay(const char* name, Region& value);
@@ -42,11 +43,13 @@ void InstanceDisplay(const char* name, Degrees& value);
 void InstanceDisplay(const char* name, const Degrees& value);
 void InstanceDisplay(const char* name, Radians& value);
 void InstanceDisplay(const char* name, const Radians& value);
+
 void InstanceDisplay(const char* name, Image* value);
 void InstanceDisplay(const char* name, const Image* value);
 void InstanceDisplay(const char* name, Pose& value);
 void InstanceDisplay(const char* name, const Pose& value);
 
+//
 template <typename T>
 void InstanceDisplay(const char* name, std::optional<T>& value) {
     ImGui::Text("%s", name);
@@ -154,6 +157,4 @@ void InstanceDisplay(const char* name,
     }
     ImGui::EndDisabled();
 }
-
-void InstanceDisplay(const char* name, const Flip&);
 }

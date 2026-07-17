@@ -6,7 +6,7 @@ import flag;
 import image;
 import math;
 import renderer;
-import flip;
+export import flip;
 
 export struct Sprite {
     Image* m_image{};

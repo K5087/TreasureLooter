@@ -7,9 +7,17 @@ import sprite;
 import transform;
 import relationship;
 
+import std;
+
 export class Prefab {
 public:
-    Sprite m_sprite;
-    Transform m_transform;
-    Relationship m_relation;
+    std::optional<Sprite> m_sprite;
+    std::optional<Transform> m_transform;
+    std::optional<Relationship> m_relation;
+};
+
+export class EntityInstance {
+public:
+    Entity m_entity;
+    Prefab m_data;
 };

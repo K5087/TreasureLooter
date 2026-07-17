@@ -1,6 +1,7 @@
 module;
 module math;
 import std;
+import simdjson;
 
 Vec2::Vec2() : x{0}, y{0} {}
 

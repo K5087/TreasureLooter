@@ -8,9 +8,14 @@
 ---@meta
 
 ---@class Prefab
----@field m_sprite Sprite
----@field m_transform Transform
----@field m_relation Relationship
+---@field m_sprite std::optional<Sprite>
+---@field m_transform std::optional<Transform>
+---@field m_relation std::optional<Relationship>
+
+
+---@class EntityInstance
+---@field m_entity Entity
+---@field m_data Prefab
 
 
 

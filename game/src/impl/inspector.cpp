@@ -8,6 +8,11 @@ module inspector;
 import renderer;
 import window;
 
+import prefab.display;
+import relationship.display;
+import sprite.display;
+import transform.display;
+
 Inspector::Inspector(Window& window, Renderer& renderer)
     : m_window{window}, m_renderer{renderer} {
     float main_scale = SDL_GetDisplayContentScale(SDL_GetPrimaryDisplay());

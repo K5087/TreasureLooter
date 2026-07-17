@@ -123,42 +123,6 @@ auto tag_invoke(deserialize_tag,simdjson_value& val,Circle& payload){
 }
 
 template <typename builder_type>
-void tag_invoke(serialize_tag, builder_type& builder,const Degrees& payload){
-    builder.start_object();
-
-    builder.end_object();
-}
-
-template<typename simdjson_value>
-auto tag_invoke(deserialize_tag,simdjson_value& val,Degrees& payload){
-    ondemand::object obj;
-    auto error = val.get_object().get(obj);
-    if(error){
-        return error;
-    }
-    
-    return simdjson::SUCCESS;
-}
-
-template <typename builder_type>
-void tag_invoke(serialize_tag, builder_type& builder,const Radians& payload){
-    builder.start_object();
-
-    builder.end_object();
-}
-
-template<typename simdjson_value>
-auto tag_invoke(deserialize_tag,simdjson_value& val,Radians& payload){
-    ondemand::object obj;
-    auto error = val.get_object().get(obj);
-    if(error){
-        return error;
-    }
-    
-    return simdjson::SUCCESS;
-}
-
-template <typename builder_type>
 void tag_invoke(serialize_tag, builder_type& builder,const Region& payload){
     builder.start_object();
     builder.template append_key_value<"m_topleft">(payload.m_topleft);

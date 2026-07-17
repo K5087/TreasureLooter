@@ -68,12 +68,16 @@ int main(int argc, char** argv) {
     std::filesystem::create_directories(output_dir / "cpp");
     // generate serialize
     for (auto& info : manager.infos) {
-        std::string code = cpp::generateSchemaCode(info);
+        std::string serialize_code = cpp::serialize::generate(info);
         auto filename = info.filename.filename();
         filename.replace_extension(".cppm");
+        std::ofstream serialize_file(output_dir / "cpp/serialize" / filename);
+        serialize_file.write(serialize_code.c_str(), serialize_code.length());
 
-        std::ofstream file(output_dir / "cpp" / filename);
-        file.write(code.c_str(), code.length());
+        // generate display
+        std::string display_code = cpp::display::generate(info);
+        std::ofstream display_file(output_dir / "cpp/display" / filename);
+        display_file.write(display_code.c_str(), display_code.length());
     }
 
     return 0;

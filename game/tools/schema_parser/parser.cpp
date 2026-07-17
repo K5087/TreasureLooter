@@ -9,7 +9,7 @@ import std;
     ts_language_symbol_for_name(language, name, std::strlen(name), true);
 
 static const TSLanguage* language = tree_sitter_cpp();
-static TSSymbol import_symbol = get_symbol(language, "module_declaration");
+static TSSymbol import_symbol = get_symbol(language, "import_declaration");
 static TSSymbol include_symbol = get_symbol(language, "preproc_include");
 static TSSymbol class_symbol = get_symbol(language, "class_specifier");
 static TSSymbol struct_symbol = get_symbol(language, "struct_specifier");
@@ -188,10 +188,10 @@ void Parser::parse_node(SchemaInfo& info, const TSNode& node,
         TSNode child = ts_node_named_child(node, i);
         TSSymbol child_symbol = ts_node_symbol(child);
         if (child_symbol == include_symbol) {
-            auto include = parse_include(child, source_code);
-            if (include) {
-                info.includes.push_back(*include);
-            }
+            // auto include = parse_include(child, source_code);
+            // if (include) {
+            //     info.includes.push_back(*include);
+            // }
         } else if (child_symbol == import_symbol) {
             auto import = parse_import(child, source_code);
             if (import) {

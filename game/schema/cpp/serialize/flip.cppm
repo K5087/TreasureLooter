@@ -58,12 +58,12 @@ void tag_invoke(serialize_tag, builder_type& builder,const Flags<Flip>& payload)
     if(payload.Value()==0){
         builder.append("None");
     }
-    builder.append_comma();
     if (payload & Flip::Horizontal){
+        builder.append_comma();
         builder.append("Horizontal");
     }
-    builder.append_comma();
     if (payload & Flip::Vertical){
+        builder.append_comma();
         builder.append("Vertical");
     }
     builder.end_array();

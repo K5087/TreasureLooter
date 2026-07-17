@@ -1,0 +1,4 @@
+CompileFlags:
+  Remove:
+    - -fmodule-file=*
+    - -fmodule-output=*
