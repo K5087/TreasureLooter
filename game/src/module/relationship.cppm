@@ -5,7 +5,7 @@ export import :serialize;
 
 import entity;
 import manager;
-import transform;
+import math;
 
 import std;
 

@@ -148,7 +148,7 @@ auto tag_invoke(deserialize_tag,simdjson_value& val,Region& payload){
 }
 
 template <typename builder_type>
-void tag_invoke(serialize_tag, builder_type& builder,const Pose& payload){
+void tag_invoke(serialize_tag, builder_type& builder,const Transform& payload){
     builder.start_object();
     builder.template append_key_value<"m_position">(payload.m_position);
     builder.append_comma();
@@ -159,7 +159,7 @@ void tag_invoke(serialize_tag, builder_type& builder,const Pose& payload){
 }
 
 template<typename simdjson_value>
-auto tag_invoke(deserialize_tag,simdjson_value& val,Pose& payload){
+auto tag_invoke(deserialize_tag,simdjson_value& val,Transform& payload){
     ondemand::object obj;
     auto error = val.get_object().get(obj);
     if(error){

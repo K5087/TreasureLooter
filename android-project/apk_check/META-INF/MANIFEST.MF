@@ -1,0 +1,37 @@
+Manifest-Version: 1.0
+Built-By: Signflinger
+Created-By: Android Gradle 8.7.3
+
+Name: AndroidManifest.xml
+SHA-256-Digest: Igt5KYGnSOmUoSx+4HNLmEYtYd8Zu6u2KL948t1//XQ=
+
+Name: META-INF/com/android/build/gradle/app-metadata.properties
+SHA-256-Digest: fc8TDUh0Jw5FDexQZJMEwPVvjIZuK9ACUwqmZBPYjC0=
+
+Name: classes.dex
+SHA-256-Digest: huJtNKqklNDAmjpyxMCFTNP7mQ05RAKG6w/v4t7i+3E=
+
+Name: classes2.dex
+SHA-256-Digest: X3Mo8TpvAgNI/C+Yzp6XiFDSWw7z8dlwil2lFZIVe10=
+
+Name: lib/arm64-v8a/libmain.so
+SHA-256-Digest: 5/49TM8yAi+ZGRAWz6YTZH1zAfaCKSRISaPuXTNH6q8=
+
+Name: res/mipmap-hdpi-v4/ic_launcher.png
+SHA-256-Digest: gIUcRtMYsM7cUbtNYJWtUdwWYp6lkO59X7rFsVw827s=
+
+Name: res/mipmap-mdpi-v4/ic_launcher.png
+SHA-256-Digest: 8Cthau2vIRaLZyn5HXiIBYMU/8P2vsHBB5XaKO1ww1c=
+
+Name: res/mipmap-xhdpi-v4/ic_launcher.png
+SHA-256-Digest: pDVQm7ED6lNeOBn6ZZINnmydxp0FBkHu2H22VaqU/vs=
+
+Name: res/mipmap-xxhdpi-v4/ic_launcher.png
+SHA-256-Digest: 4VAhhQSSEQJayUKNpx6tIJ2qW976aXUFOocNDkLFoYw=
+
+Name: res/mipmap-xxxhdpi-v4/ic_launcher.png
+SHA-256-Digest: Ng3m4SMVGwqWsW7X1oMhWAXcUp4tJTntrLXcnj3XkRk=
+
+Name: resources.arsc
+SHA-256-Digest: yJlorA2VsX76zvMIyocDPRtOEzzjVL/gY9SR9kv/QNg=
+

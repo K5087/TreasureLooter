@@ -1,11 +1,12 @@
 module;
+#include <log.hpp>
 #include <sdl_call.hpp>
 
 #include <SDL3/SDL.h>
 module window;
 
-import log;
 import math;
+import log;
 
 Window::Window(const std::string& title, int w, int h) {
 #ifdef SDL_PLATFORM_ANDROID

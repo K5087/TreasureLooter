@@ -1,8 +1,10 @@
 #define SDL_MAIN_USE_CALLBACKS
+import std;
 #include <sdl_call.hpp>
 
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_main.h>
+#include <log.hpp>
 
 import context;
 import log;

@@ -169,6 +169,10 @@ std::string generate(const ClassInfo& info) {
     return display_mustache.render(display_data);
 }
 
+bool is_import(const std::string& name, std::filesystem::path dir) {
+    return std::filesystem::exists(dir / (name + ".cppm"));
+};
+
 std::string generate(const SchemaInfo& schema_info) {
     kainjow::mustache::data display_datas{kainjow::mustache::data::type::list};
     for (auto& schema : schema_info.classes) {
@@ -183,11 +187,10 @@ std::string generate(const SchemaInfo& schema_info) {
     }
 
     kainjow::mustache::data import_datas{kainjow::mustache::data::type::list};
-    for (auto& import : schema_info.includes) {
-        if (import != "std" and import != "entity" and import != "flag" and
-            import != "image" and import != "renderer") {
+    for (auto& include : schema_info.includes) {
+        if (is_import(include, schema_info.filename.parent_path())) {
             import_datas << kainjow::mustache::data{"name",
-                                                    import + ".display"};
+                                                    include + ".display"};
         }
     }
     auto& schema_mustache = MustacheManager::GetInst().cpp_schema_display;
@@ -196,6 +199,7 @@ std::string generate(const SchemaInfo& schema_info) {
     schema_data.set("name", schema_info.filename.stem().string());
     schema_data.set("has_enum", schema_info.enums.size() > 0);
     schema_data.set("imports", import_datas);
+    // math display impl in instance_display
     if (schema_info.filename.stem().string() != "math") {
         schema_data.set("displays", display_datas);
     }

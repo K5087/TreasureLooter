@@ -1,12 +1,13 @@
 module;
-struct SDL_Renderer;
-struct SDL_Texture;
+#include <log.hpp>
+
+#include <SDL3/SDL.h>
 export module image;
 
+import log;
 import path;
 import math;
 import simdjson;
-import log;
 
 import std;
 export {

@@ -1,9 +1,9 @@
 module;
-
+#include <log.hpp>
 export module manager;
 
-import entity;
 import log;
+import entity;
 
 import std;
 

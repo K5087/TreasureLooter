@@ -1,4 +1,5 @@
 module;
+#include <log.hpp>
 #include <sdl_call.hpp>
 
 #include <SDL3/SDL.h>

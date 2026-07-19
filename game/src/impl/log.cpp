@@ -16,19 +16,19 @@ LogManager& LogManager::GetInst() {
 }
 
 LogManager::LogManager() {
-#ifdef SDL_PLATFORM_ANDORID
-    std::string tag = "spdlog-android" m_console_logger =
-        spdlog::android_logger_mt("android", tag);
+#ifdef SDL_PLATFORM_ANDROID
+    std::string tag = "spdlog-android";
+    m_console_logger = spdlog::android_logger_mt("android", tag);
 
     m_file_logger = spdlog::null_logger_mt("file_logger");
 #else
     m_console_logger = spdlog::stdout_color_mt("console");
+
     try {
         m_file_logger =
             spdlog::basic_logger_mt("m_file_logger", "logs/log.txt");
     } catch (const spdlog::spdlog_ex& ex) {
         std::cout << "Log init failed: " << ex.what() << std::endl;
     }
-
-#endif  // SDL_PLATFORM_ANDORID
+#endif
 }

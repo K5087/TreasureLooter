@@ -1,5 +1,5 @@
 module;
-union SDL_Event;
+#include <SDL3/SDL.h>
 export module context;
 
 import window;
@@ -10,6 +10,9 @@ import transform;
 import sprite;
 import relationship;
 import entity;
+import keyboard;
+import mouse;
+import finger_touch;
 
 import std;
 
@@ -38,6 +41,9 @@ public:
     std::unique_ptr<RelationshipManager> m_relation_manager;
     std::unique_ptr<TransformManager> m_transform_manager;
     std::unique_ptr<SpriteManager> m_sprite_manager;
+    std::unique_ptr<Keyboard> m_keyboard;
+    std::unique_ptr<Mouse> m_mouse;
+    std::unique_ptr<Touch> m_touch;
 
     Entity GetRootEntity();
 
@@ -50,6 +56,8 @@ private:
     Context();
 
     void logicUpdate();
+    void gameLogicUpdate();
+    void logicPostUpdate();
     void renderUpdate();
 
     Entity createEntity();

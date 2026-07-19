@@ -38,12 +38,14 @@ foreach(schema ${TYPES})
     )
 endforeach()
 
-add_custom_command(OUTPUT ${SCHEMA_OUTPUT_FILES}
+if(NOT ANDROID)
+    add_custom_command(OUTPUT ${SCHEMA_OUTPUT_FILES}
     COMMAND $<TARGET_FILE:schema_parser> ${SCHEMA_DIR} --output=${SCHEMA_OUTPUT_PATH} --src-prefix = "./"
     DEPENDS $<TARGET_FILE:schema_parser> ${TYPES} ${MUSTACHES}
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
     COMMENT "parsing schemas..."
 )
+endif()
 
 ################ compile game ######################
 
@@ -68,9 +70,9 @@ target_sources(${GAME_NAME}
             ${MODULE}
 )
 target_include_directories(${GAME_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src/header)
-target_link_libraries(${GAME_NAME} PRIVATE SDL3::SDL3 spdlog::spdlog stb_image imgui simdjson)
+target_link_libraries(${GAME_NAME} PRIVATE SDL3::SDL3-static spdlog::spdlog stb_image imgui simdjson std)
 target_compile_definitions(${GAME_NAME} PRIVATE _CRT_SECURE_NO_WARNINGS)
-set_property(TARGET ${GAME_NAME} PROPERTY CXX_MODULE_STD ON)
+# set_property(TARGET ${GAME_NAME} PROPERTY CXX_MODULE_STD ON)
 
 ################ install #######################
 install(TARGETS ${GAME_NAME} DESTINATION .)

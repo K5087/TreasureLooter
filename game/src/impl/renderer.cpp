@@ -1,10 +1,11 @@
 module;
+#include <log.hpp>
 #include <sdl_call.hpp>
 
 module renderer;
 
-import math;
 import log;
+import math;
 
 Renderer::Renderer(Window& window) {
     m_renderer = SDL_CreateRenderer(window.GetWindow(), nullptr);

@@ -1,14 +1,15 @@
 module;
+#include <log.hpp>
 #include <sdl_call.hpp>
 #include <stb_image.h>
 
 #include <SDL3/SDL.h>
 module image;
 
+import log;
 import math;
 import renderer;
 import storage;
-import log;
 import context;
 
 Image::Image(SDL_Renderer &renderer, const Path &filename)

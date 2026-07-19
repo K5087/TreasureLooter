@@ -1,10 +1,11 @@
 module;
-#include <simdjson.h>
+#include <log.hpp>
 export module serialize;
 
-import std;
-import simdjson;
 import log;
+import simdjson;
+
+import std;
 
 export {
 template <typename T>

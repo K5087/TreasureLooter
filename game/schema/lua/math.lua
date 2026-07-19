@@ -32,6 +32,9 @@
 ---@class Degrees
 
 
+---@class Mat33
+
+
 ---@class Radians
 
 
@@ -40,7 +43,7 @@
 ---@field m_size Vec2
 
 
----@class Pose
+---@class Transform
 ---@field m_position Vec2
 ---@field m_rotation Degrees
 ---@field m_scale Vec2

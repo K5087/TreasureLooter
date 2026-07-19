@@ -54,30 +54,36 @@ int main(int argc, char** argv) {
             manager.infos.push_back(schema_info.value());
         }
     }
+    std::filesystem::path lua_path = output_dir / "lua";
+    std::filesystem::path cpp_serialize_path = output_dir / "cpp/serialize";
+    std::filesystem::path cpp_display_path = output_dir / "cpp/display";
 
-    std::filesystem::create_directories(output_dir / "lua");
-    // generate lua
+    std::filesystem::create_directories(lua_path);
+    std::filesystem::create_directories(cpp_serialize_path);
+    std::filesystem::create_directories(cpp_display_path);
+
     for (auto& info : manager.infos) {
+        // generate lua
         std::string code = lua::generateSchemaCode(info);
-        auto filename = info.filename.filename();
-        filename.replace_extension(".lua");
-        std::ofstream file(output_dir / "lua" / filename);
+        auto lua_filename = info.filename.filename();
+        lua_filename.replace_extension(".lua");
+        std::ofstream file(lua_path / lua_filename);
         file.write(code.c_str(), code.length());
-    }
 
-    std::filesystem::create_directories(output_dir / "cpp");
-    // generate serialize
-    for (auto& info : manager.infos) {
+        // generate serialize
         std::string serialize_code = cpp::serialize::generate(info);
-        auto filename = info.filename.filename();
-        filename.replace_extension(".cppm");
-        std::ofstream serialize_file(output_dir / "cpp/serialize" / filename);
+        auto cpp_filename = info.filename.filename();
+        cpp_filename.replace_extension(".cppm");
+        std::ofstream serialize_file(cpp_serialize_path / cpp_filename);
         serialize_file.write(serialize_code.c_str(), serialize_code.length());
 
         // generate display
         std::string display_code = cpp::display::generate(info);
-        std::ofstream display_file(output_dir / "cpp/display" / filename);
+        std::ofstream display_file(cpp_display_path / cpp_filename);
         display_file.write(display_code.c_str(), display_code.length());
+    }
+
+    for (auto& info : manager.infos) {
     }
 
     return 0;

@@ -4,7 +4,7 @@ export module prefab:type;
 
 import entity;
 import sprite;
-import transform;
+import math;
 import relationship;
 
 import std;

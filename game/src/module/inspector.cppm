@@ -23,7 +23,7 @@ private:
     Window& m_window;
     Renderer& m_renderer;
     bool m_hierarchy_window_open = true;
-    bool m_detail__window_open = true;
+    bool m_detail_window_open = true;
 
     std::optional<Entity> m_selected_entity;
 

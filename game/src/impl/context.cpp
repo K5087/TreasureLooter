@@ -1,7 +1,11 @@
 module;
+import std;
+#include <log.hpp>
 #include <sdl_call.hpp>
 
 #include <SDL3/SDL.h>
+#include <imgui.h>
+
 module context;
 
 import image;
@@ -13,10 +17,7 @@ import serialize;
 import asset;
 import prefab;
 import path;
-
 import log;
-
-import std;
 
 std::unique_ptr<Context> Context::instance;
 
@@ -33,11 +34,14 @@ void Context::Destroy() {
     instance.reset();
 }
 
-Context &Context::GetInst() {
+Context& Context::GetInst() {
     return *instance;
 }
 
 Context::~Context() {
+    m_touch.reset();
+    m_mouse.reset();
+    m_keyboard.reset();
     m_sprite_manager.reset();
     m_transform_manager.reset();
     m_inspector.reset();
@@ -52,37 +56,71 @@ void Context::Update() {
     ///////// this is a test /////////////
     static bool executed = false;
     if (!executed) {
-        EntityInstance prefab =
-            LoadAsset<EntityInstance>(Path("assets/gpa/waggo.entity.json"));
-        if (prefab.m_data.m_transform) {
-            m_transform_manager->RegisterEntity(
-                prefab.m_entity, prefab.m_data.m_transform.value());
-        }
-        if (prefab.m_data.m_sprite) {
-            m_sprite_manager->RegisterEntity(prefab.m_entity,
-                                             prefab.m_data.m_sprite.value());
-        }
-        if (prefab.m_data.m_relation) {
-            m_relation_manager->RegisterEntity(
-                prefab.m_entity, prefab.m_data.m_relation.value());
-        }
+        Entity entity1;
+        {
+            auto prefab =
+                LoadAsset<EntityInstance>(Path("assets/gpa/waggo.entity.json"));
+            entity1 = prefab.m_entity;
+            if (prefab.m_data.m_transform) {
+                m_transform_manager->RegisterEntity(
+                    prefab.m_entity, prefab.m_data.m_transform.value());
+            }
+            if (prefab.m_data.m_sprite) {
+                m_sprite_manager->RegisterEntity(
+                    prefab.m_entity, prefab.m_data.m_sprite.value());
+            }
+            if (prefab.m_data.m_relation) {
+                m_relation_manager->RegisterEntity(
+                    prefab.m_entity, prefab.m_data.m_relation.value());
+            }
 
-        m_relation_manager->Get(m_root_entity)
-            ->m_children.push_back(prefab.m_entity);
+            m_relation_manager->Get(m_root_entity)
+                ->m_children.push_back(prefab.m_entity);
+        }
+        {
+            auto prefab = LoadAsset<EntityInstance>(
+                Path("assets/gpa/waggo2.entity.json"));
+            if (prefab.m_data.m_transform) {
+                m_transform_manager->RegisterEntity(
+                    prefab.m_entity, prefab.m_data.m_transform.value());
+            }
+            if (prefab.m_data.m_sprite) {
+                m_sprite_manager->RegisterEntity(
+                    prefab.m_entity, prefab.m_data.m_sprite.value());
+            }
+            if (prefab.m_data.m_relation) {
+                m_relation_manager->RegisterEntity(
+                    prefab.m_entity, prefab.m_data.m_relation.value());
+            }
+
+            m_relation_manager->Get(entity1)->m_children.push_back(
+                prefab.m_entity);
+        }
 
         executed = true;
-        std::cout << Serialize(prefab) << std::endl;
     }
     /////////////////////////////////////
 
+    logicUpdate();
+    gameLogicUpdate();
     renderUpdate();
+    logicPostUpdate();
 }
 
-void Context::HandleEvents(const SDL_Event &event) {
+void Context::HandleEvents(const SDL_Event& event) {
     m_inspector->HandleEvents(event);
     if (event.type == SDL_EVENT_QUIT) {
         m_should_exit = true;
+    } else if (event.type == SDL_EVENT_KEY_UP ||
+               event.type == SDL_EVENT_KEY_DOWN) {
+        m_keyboard->HandleEvent(event.key);
+    } else if (event.type == SDL_EVENT_FINGER_DOWN ||
+               event.type == SDL_EVENT_FINGER_UP ||
+               event.type == SDL_EVENT_FINGER_MOTION ||
+               event.type == SDL_EVENT_FINGER_CANCELED) {
+        m_touch->HandleEvent(event.tfinger);
     }
+    m_mouse->HandleEvent(event);
 }
 
 bool Context::ShouldExit() {
@@ -112,15 +150,76 @@ Context::Context() {
     m_relation_manager = std::make_unique<RelationshipManager>(m_root_entity);
 
     m_transform_manager->RegisterEntity(m_root_entity);
+    m_keyboard = std::make_unique<Keyboard>();
+    m_mouse = std::make_unique<Mouse>();
+    m_touch = std::make_unique<Touch>();
 }
 
 void Context::logicUpdate() {
+    m_touch->Update();
+    m_mouse->Update();
+    m_keyboard->Update();
     m_relation_manager->Update();
+}
+
+void Context::gameLogicUpdate() {
+    auto children = m_relation_manager->Get(m_root_entity);
+    Entity entity = children->m_children[0];
+    auto transform = m_transform_manager->Get(entity);
+
+    if (m_keyboard->Get(SDLK_A).IsPressing()) {
+        transform->m_position.x -= 0.1;
+    }
+    if (m_keyboard->Get(SDLK_D).IsPressing()) {
+        transform->m_position.x += 0.1;
+    }
+    if (m_keyboard->Get(SDLK_W).IsPressing()) {
+        transform->m_position.y -= 0.1;
+    }
+    if (m_keyboard->Get(SDLK_S).IsPressing()) {
+        transform->m_position.y += 0.1;
+    }
+    if (m_keyboard->Get(SDLK_J).IsPressed()) {
+        transform->m_rotation += 10;
+    }
+    if (m_keyboard->Get(SDLK_K).IsReleased()) {
+        transform->m_rotation -= 10;
+    }
+}
+
+void Context::logicPostUpdate() {
+    m_mouse->PostUpdate();
+    m_touch->PostUpdate();
 }
 
 void Context::renderUpdate() {
     m_inspector->BeginFrame();
     m_renderer->Clear();
+
+    auto& fingers = m_touch->GetFingers();
+    if (ImGui::Begin("finger test")) {
+        for (int i = 0; i < fingers.size(); i++) {
+            auto& finger = fingers[i];
+            std::string status;
+            if (finger.IsPressing()) {
+                status = "Pressing";
+            } else if (finger.IsPressed()) {
+                status = "Pressed";
+            } else if (finger.IsReleased()) {
+                status = "Released";
+            } else if (finger.IsReleasing()) {
+                status = "Releasing";
+            } else {
+                status = "Unknown";
+            }
+            ImGui::Text("finger index :%d, status: %s, position: {%f, %f}, "
+                        "offset: {%f, %f}",
+                        i, status.c_str(), finger.Position().x,
+                        finger.Position().y, finger.Offset().x,
+                        finger.Offset().y);
+        }
+        ImGui::End();
+    }
 
     m_sprite_manager->Update();
 

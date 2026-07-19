@@ -1,0 +1,59 @@
+--------- beginning of crash
+07-19 20:56:49.059 29152 29746 F libc    : Fatal signal 6 (SIGABRT), code -1 (SI_QUEUE) in tid 29746 (SDLThread), pid 29152 (SDLActivity)
+07-19 20:56:49.318 29761 29761 F DEBUG   : *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ***
+07-19 20:56:49.319 29761 29761 F DEBUG   : Build fingerprint: 'Redmi/duchamp/duchamp:16/BP2A.250605.031.A3/OS3.0.303.0.WNLCNXM:user/release-keys'
+07-19 20:56:49.319 29761 29761 F DEBUG   : Revision: '0'
+07-19 20:56:49.319 29761 29761 F DEBUG   : ABI: 'arm64'
+07-19 20:56:49.319 29761 29761 F DEBUG   : Timestamp: 2026-07-19 20:56:49.148284982+0800
+07-19 20:56:49.319 29761 29761 F DEBUG   : Process uptime: 178s
+07-19 20:56:49.319 29761 29761 F DEBUG   : Cmdline: org.libsdl.app
+07-19 20:56:49.319 29761 29761 F DEBUG   : pid: 29152, tid: 29746, name: SDLThread  >>> org.libsdl.app <<<
+07-19 20:56:49.319 29761 29761 F DEBUG   : uid: 10286
+07-19 20:56:49.319 29761 29761 F DEBUG   : tagged_addr_ctrl: 0000000000000001 (PR_TAGGED_ADDR_ENABLE)
+07-19 20:56:49.319 29761 29761 F DEBUG   : pac_enabled_keys: 000000000000000f (PR_PAC_APIAKEY, PR_PAC_APIBKEY, PR_PAC_APDAKEY, PR_PAC_APDBKEY)
+07-19 20:56:49.319 29761 29761 F DEBUG   : signal 6 (SIGABRT), code -1 (SI_QUEUE), fault addr --------
+07-19 20:56:49.319 29761 29761 F DEBUG   : Abort message: 'terminating due to uncaught exception of type N8simdjson14simdjson_errorE: EMPTY: no JSON found'
+07-19 20:56:49.319 29761 29761 F DEBUG   :     x0  0000000000000000  x1  0000000000007432  x2  0000000000000006  x3  0000007722ffa030
+07-19 20:56:49.319 29761 29761 F DEBUG   :     x4  646277641f736766  x5  646277641f736766  x6  646277641f736766  x7  7f7f7f7f7f7f7f7f
+07-19 20:56:49.319 29761 29761 F DEBUG   :     x8  00000000000000f0  x9  6acfe02fa4db8828  x10 0000000000000001  x11 0000007a82a99920
+07-19 20:56:49.319 29761 29761 F DEBUG   :     x12 000000006a5cc991  x13 000000007fffffff  x14 0000000020cf2834  x15 00001b591ecb606b
+07-19 20:56:49.319 29761 29761 F DEBUG   :     x16 0000007a82b07130  x17 0000007a82aed9c0  x18 0000007722498000  x19 00000000000071e0
+07-19 20:56:49.319 29761 29761 F DEBUG   :     x20 0000000000007432  x21 00000000ffffffff  x22 0000007722ffa160  x23 0000007722ffa1a0
+07-19 20:56:49.319 29761 29761 F DEBUG   :     x24 0000007722ffa250  x25 0000000000000000  x26 0000000000000002  x27 0000000000000000
+07-19 20:56:49.319 29761 29761 F DEBUG   :     x28 b4000077eb2edef0  x29 0000007722ffa0b0
+07-19 20:56:49.319 29761 29761 F DEBUG   :     lr  0000007a82a82f58  sp  0000007722ffa030  pc  0000007a82a82f7c  pst 0000000000001000
+07-19 20:56:49.319 29761 29761 F DEBUG   : 33 total frames
+07-19 20:56:49.319 29761 29761 F DEBUG   : backtrace:
+07-19 20:56:49.319 29761 29761 F DEBUG   :       #00 pc 0000000000072f7c  /apex/com.android.runtime/lib64/bionic/libc.so (abort+156) (BuildId: 9511d9cb89af590535458e21a5811d1a)
+07-19 20:56:49.319 29761 29761 F DEBUG   :       #01 pc 00000000004cec88  /data/app/~~nUzeuSiwCfHt8I3tnujiWw==/org.libsdl.app-cWLM5ikpK37xp-vnhUNHvA==/lib/arm64/libmain.so (BuildId: db5b5c551443829ce42ba713b74e9dbd6d8ae71f)
+07-19 20:56:49.319 29761 29761 F DEBUG   :       #02 pc 00000000004ce58c  /data/app/~~nUzeuSiwCfHt8I3tnujiWw==/org.libsdl.app-cWLM5ikpK37xp-vnhUNHvA==/lib/arm64/libmain.so (BuildId: db5b5c551443829ce42ba713b74e9dbd6d8ae71f)
+07-19 20:56:49.319 29761 29761 F DEBUG   :       #03 pc 00000000004ce444  /data/app/~~nUzeuSiwCfHt8I3tnujiWw==/org.libsdl.app-cWLM5ikpK37xp-vnhUNHvA==/lib/arm64/libmain.so (BuildId: db5b5c551443829ce42ba713b74e9dbd6d8ae71f)
+07-19 20:56:49.319 29761 29761 F DEBUG   :       #04 pc 00000000004d0ac0  /data/app/~~nUzeuSiwCfHt8I3tnujiWw==/org.libsdl.app-cWLM5ikpK37xp-vnhUNHvA==/lib/arm64/libmain.so (BuildId: db5b5c551443829ce42ba713b74e9dbd6d8ae71f)
+07-19 20:56:49.320 29761 29761 F DEBUG   :       #05 pc 00000000004d0a9c  /data/app/~~nUzeuSiwCfHt8I3tnujiWw==/org.libsdl.app-cWLM5ikpK37xp-vnhUNHvA==/lib/arm64/libmain.so (__cxa_throw+88) (BuildId: db5b5c551443829ce42ba713b74e9dbd6d8ae71f)
+07-19 20:56:49.320 29761 29761 F DEBUG   :       #06 pc 00000000001a820c  /data/app/~~nUzeuSiwCfHt8I3tnujiWw==/org.libsdl.app-cWLM5ikpK37xp-vnhUNHvA==/lib/arm64/libmain.so (void Deserialize@serialize<EntityInstance@prefab>(std::__ndk1::basic_string<char, std::__ndk1::char_traits<char>, std::__ndk1::allocator<char>>&, EntityInstance@prefab&)+1100) (BuildId: db5b5c551443829ce42ba713b74e9dbd6d8ae71f)
+07-19 20:56:49.320 29761 29761 F DEBUG   :       #07 pc 00000000001a5cfc  /data/app/~~nUzeuSiwCfHt8I3tnujiWw==/org.libsdl.app-cWLM5ikpK37xp-vnhUNHvA==/lib/arm64/libmain.so (EntityInstance@prefab LoadAsset@asset<EntityInstance@prefab>(std::__ndk1::__fs::filesystem::path const&)+176) (BuildId: db5b5c551443829ce42ba713b74e9dbd6d8ae71f)
+07-19 20:56:49.320 29761 29761 F DEBUG   :       #08 pc 00000000001a56d4  /data/app/~~nUzeuSiwCfHt8I3tnujiWw==/org.libsdl.app-cWLM5ikpK37xp-vnhUNHvA==/lib/arm64/libmain.so (Context@context::Update()+100) (BuildId: db5b5c551443829ce42ba713b74e9dbd6d8ae71f)
+07-19 20:56:49.320 29761 29761 F DEBUG   :       #09 pc 00000000001bea64  /data/app/~~nUzeuSiwCfHt8I3tnujiWw==/org.libsdl.app-cWLM5ikpK37xp-vnhUNHvA==/lib/arm64/libmain.so (SDL_AppIterate+36) (BuildId: db5b5c551443829ce42ba713b74e9dbd6d8ae71f)
+07-19 20:56:49.320 29761 29761 F DEBUG   :       #10 pc 000000000039a6b0  /data/app/~~nUzeuSiwCfHt8I3tnujiWw==/org.libsdl.app-cWLM5ikpK37xp-vnhUNHvA==/lib/arm64/libmain.so (SDL_IterateMainCallbacks+64) (BuildId: db5b5c551443829ce42ba713b74e9dbd6d8ae71f)
+07-19 20:56:49.320 29761 29761 F DEBUG   :       #11 pc 0000000000411f88  /data/app/~~nUzeuSiwCfHt8I3tnujiWw==/org.libsdl.app-cWLM5ikpK37xp-vnhUNHvA==/lib/arm64/libmain.so (SDL_EnterAppMainCallbacks+120) (BuildId: db5b5c551443829ce42ba713b74e9dbd6d8ae71f)
+07-19 20:56:49.320 29761 29761 F DEBUG   :       #12 pc 00000000003afd08  /data/app/~~nUzeuSiwCfHt8I3tnujiWw==/org.libsdl.app-cWLM5ikpK37xp-vnhUNHvA==/lib/arm64/libmain.so (Java_org_libsdl_app_SDLActivity_nativeRunMain+808) (BuildId: db5b5c551443829ce42ba713b74e9dbd6d8ae71f)
+07-19 20:56:49.320 29761 29761 F DEBUG   :       #13 pc 0000000000361900  /apex/com.android.art/lib64/libart.so (art_quick_generic_jni_trampoline+144) (BuildId: 3f0f34625f42ea142063bf587c36b8b4)
+07-19 20:56:49.320 29761 29761 F DEBUG   :       #14 pc 000000000034a860  /apex/com.android.art/lib64/libart.so (art_quick_invoke_static_stub+640) (BuildId: 3f0f34625f42ea142063bf587c36b8b4)
+07-19 20:56:49.320 29761 29761 F DEBUG   :       #15 pc 000000000068854c  /apex/com.android.art/lib64/libart.so (bool art::interpreter::DoCall<false>(art::ArtMethod*, art::Thread*, art::ShadowFrame&, art::Instruction const*, unsigned short, bool, art::JValue*)+2092) (BuildId: 3f0f34625f42ea142063bf587c36b8b4)
+07-19 20:56:49.320 29761 29761 F DEBUG   :       #16 pc 0000000000692280  /apex/com.android.art/lib64/libart.so (void art::interpreter::ExecuteSwitchImplCpp<false>(art::interpreter::SwitchImplContext*)+1376) (BuildId: 3f0f34625f42ea142063bf587c36b8b4)
+07-19 20:56:49.320 29761 29761 F DEBUG   :       #17 pc 000000000028ac28  /apex/com.android.art/lib64/libart.so (ExecuteSwitchImplAsm+8) (BuildId: 3f0f34625f42ea142063bf587c36b8b4)
+07-19 20:56:49.320 29761 29761 F DEBUG   :       #18 pc 000000000000afbc  <anonymous:7a79681000> (org.libsdl.app.SDLActivity.main+0)
+07-19 20:56:49.320 29761 29761 F DEBUG   :       #19 pc 000000000028a620  /apex/com.android.art/lib64/libart.so (art::interpreter::ArtInterpreterToInterpreterBridge(art::Thread*, art::CodeItemDataAccessor const&, art::ShadowFrame*, art::JValue*)+416) (BuildId: 3f0f34625f42ea142063bf587c36b8b4)
+07-19 20:56:49.320 29761 29761 F DEBUG   :       #20 pc 0000000000688538  /apex/com.android.art/lib64/libart.so (bool art::interpreter::DoCall<false>(art::ArtMethod*, art::Thread*, art::ShadowFrame&, art::Instruction const*, unsigned short, bool, art::JValue*)+2072) (BuildId: 3f0f34625f42ea142063bf587c36b8b4)
+07-19 20:56:49.320 29761 29761 F DEBUG   :       #21 pc 000000000069210c  /apex/com.android.art/lib64/libart.so (void art::interpreter::ExecuteSwitchImplCpp<false>(art::interpreter::SwitchImplContext*)+1004) (BuildId: 3f0f34625f42ea142063bf587c36b8b4)
+07-19 20:56:49.320 29761 29761 F DEBUG   :       #22 pc 000000000028ac28  /apex/com.android.art/lib64/libart.so (ExecuteSwitchImplAsm+8) (BuildId: 3f0f34625f42ea142063bf587c36b8b4)
+07-19 20:56:49.320 29761 29761 F DEBUG   :       #23 pc 000000000000e034  <anonymous:7a79681000> (org.libsdl.app.SDLMain.run+0)
+07-19 20:56:49.320 29761 29761 F DEBUG   :       #24 pc 000000000028ba34  /apex/com.android.art/lib64/libart.so (art::interpreter::Execute(art::Thread*, art::CodeItemDataAccessor const&, art::ShadowFrame&, art::JValue, bool, bool) (.__uniq.112435418011751916792819755956732575238.llvm.14990670706800799674)+340) (BuildId: 3f0f34625f42ea142063bf587c36b8b4)
+07-19 20:56:49.320 29761 29761 F DEBUG   :       #25 pc 000000000028b258  /apex/com.android.art/lib64/libart.so (artQuickToInterpreterBridge+888) (BuildId: 3f0f34625f42ea142063bf587c36b8b4)
+07-19 20:56:49.320 29761 29761 F DEBUG   :       #26 pc 0000000000361a38  /apex/com.android.art/lib64/libart.so (art_quick_to_interpreter_bridge+88) (BuildId: 3f0f34625f42ea142063bf587c36b8b4)
+07-19 20:56:49.320 29761 29761 F DEBUG   :       #27 pc 0000000002006b00  /memfd:jit-cache (deleted) (offset 0x2000000) (java.lang.Thread.run+144)
+07-19 20:56:49.321 29761 29761 F DEBUG   :       #28 pc 000000000034a594  /apex/com.android.art/lib64/libart.so (art_quick_invoke_stub+612) (BuildId: 3f0f34625f42ea142063bf587c36b8b4)
+07-19 20:56:49.321 29761 29761 F DEBUG   :       #29 pc 000000000028d718  /apex/com.android.art/lib64/libart.so (art::ArtMethod::Invoke(art::Thread*, unsigned int*, unsigned int, art::JValue*, char const*)+216) (BuildId: 3f0f34625f42ea142063bf587c36b8b4)
+07-19 20:56:49.321 29761 29761 F DEBUG   :       #30 pc 000000000048a3c4  /apex/com.android.art/lib64/libart.so (art::Thread::CreateCallback(void*)+1364) (BuildId: 3f0f34625f42ea142063bf587c36b8b4)
+07-19 20:56:49.321 29761 29761 F DEBUG   :       #31 pc 000000000008438c  /apex/com.android.runtime/lib64/bionic/libc.so (__pthread_start(void*)+236) (BuildId: 9511d9cb89af590535458e21a5811d1a)
+07-19 20:56:49.321 29761 29761 F DEBUG   :       #32 pc 00000000000768b0  /apex/com.android.runtime/lib64/bionic/libc.so (__start_thread+64) (BuildId: 9511d9cb89af590535458e21a5811d1a)

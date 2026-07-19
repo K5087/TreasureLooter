@@ -11,7 +11,7 @@ import prefab;
 import instance_display;
 import imgui_id_generator;
 import sprite.display;
-import transform.display;
+import math.display;
 import relationship.display;
 
 import std;
