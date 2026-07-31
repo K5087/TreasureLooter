@@ -7,8 +7,4 @@ public:
     virtual bool IsReleasing() const = 0;
     virtual bool IsReleased() const = 0;
     virtual bool IsPressed() const = 0;
-
-    bool IsPress() { return IsPressing() && IsPressed(); }
-
-    bool IsReleas() { return IsReleased() && IsReleasing(); }
 };

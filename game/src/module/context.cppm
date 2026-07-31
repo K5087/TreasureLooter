@@ -13,6 +13,7 @@ import entity;
 import keyboard;
 import mouse;
 import finger_touch;
+import gamepad;
 
 import std;
 
@@ -44,6 +45,7 @@ public:
     std::unique_ptr<Keyboard> m_keyboard;
     std::unique_ptr<Mouse> m_mouse;
     std::unique_ptr<Touch> m_touch;
+    std::unique_ptr<GamepadManager> m_gamepad_manager;
 
     Entity GetRootEntity();
 

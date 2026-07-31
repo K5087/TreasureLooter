@@ -1,5 +1,4 @@
 module;
-import std;
 #include <log.hpp>
 #include <sdl_call.hpp>
 
@@ -39,6 +38,7 @@ Context& Context::GetInst() {
 }
 
 Context::~Context() {
+    m_gamepad_manager.reset();
     m_touch.reset();
     m_mouse.reset();
     m_keyboard.reset();
@@ -120,6 +120,7 @@ void Context::HandleEvents(const SDL_Event& event) {
                event.type == SDL_EVENT_FINGER_CANCELED) {
         m_touch->HandleEvent(event.tfinger);
     }
+    m_gamepad_manager->HandleEvent(event);
     m_mouse->HandleEvent(event);
 }
 
@@ -153,9 +154,11 @@ Context::Context() {
     m_keyboard = std::make_unique<Keyboard>();
     m_mouse = std::make_unique<Mouse>();
     m_touch = std::make_unique<Touch>();
+    m_gamepad_manager = std::make_unique<GamepadManager>();
 }
 
 void Context::logicUpdate() {
+    m_gamepad_manager->Update();
     m_touch->Update();
     m_mouse->Update();
     m_keyboard->Update();
@@ -167,7 +170,13 @@ void Context::gameLogicUpdate() {
     Entity entity = children->m_children[0];
     auto transform = m_transform_manager->Get(entity);
 
-    if (m_keyboard->Get(SDLK_A).IsPressing()) {
+    auto& gamepads = m_gamepad_manager->GetGamepads();
+    if (gamepads.empty()) {
+        return;
+    }
+    auto& gamepad = gamepads.begin()->second;
+
+    if (gamepad.GetButton(SDL_GAMEPAD_BUTTON_WEST).IsPressing()) {
         transform->m_position.x -= 0.1;
     }
     if (m_keyboard->Get(SDLK_D).IsPressing()) {

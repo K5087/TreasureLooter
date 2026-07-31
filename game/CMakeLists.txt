@@ -70,7 +70,7 @@ target_sources(${GAME_NAME}
             ${MODULE}
 )
 target_include_directories(${GAME_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src/header)
-target_link_libraries(${GAME_NAME} PRIVATE SDL3::SDL3-static spdlog::spdlog stb_image imgui simdjson std)
+target_link_libraries(${GAME_NAME} PRIVATE SDL3::SDL3 spdlog::spdlog stb_image imgui simdjson std)
 target_compile_definitions(${GAME_NAME} PRIVATE _CRT_SECURE_NO_WARNINGS)
 # set_property(TARGET ${GAME_NAME} PROPERTY CXX_MODULE_STD ON)
 

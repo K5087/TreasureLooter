@@ -1,6 +1,6 @@
 #pragma once
 
-import std;
+// import std;
 #include <SDL3/SDL.h>
 #define SDL_CALL(expr)                             \
     do {                                           \
