@@ -6,14 +6,16 @@ import window;
 import renderer;
 import image;
 import inspector;
-import transform;
-import sprite;
-import relationship;
 import entity;
 import keyboard;
 import mouse;
 import finger_touch;
 import gamepad;
+import input;
+
+import sprite.manager;
+import transform.manager;
+import relationship.manager;
 
 import std;
 
@@ -46,6 +48,7 @@ public:
     std::unique_ptr<Mouse> m_mouse;
     std::unique_ptr<Touch> m_touch;
     std::unique_ptr<GamepadManager> m_gamepad_manager;
+    std::unique_ptr<InputManager> m_input_manager;
 
     Entity GetRootEntity();
 

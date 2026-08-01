@@ -3,17 +3,18 @@
 /////////////////////////////////////////////////////////////////////
 
 module;
-export module math:serialize;
+export module math.serialize;
+export import math;
 
-import :type;
+
+
+
 import simdjson;
 import std;
 
-
 export namespace simdjson{
 
-template <typename builder_type>
-void tag_invoke(serialize_tag, builder_type& builder,const Vec2& payload){
+void tag_invoke(serialize_tag, builder::string_builder& builder,const Vec2& payload){
     builder.start_object();
     builder.template append_key_value<"x">(payload.x);
     builder.append_comma();
@@ -21,8 +22,7 @@ void tag_invoke(serialize_tag, builder_type& builder,const Vec2& payload){
     builder.end_object();
 }
 
-template<typename simdjson_value>
-auto tag_invoke(deserialize_tag,simdjson_value& val,Vec2& payload){
+auto tag_invoke(deserialize_tag,ondemand::document& val,Vec2& payload){
     ondemand::object obj;
     auto error = val.get_object().get(obj);
     if(error){
@@ -37,8 +37,22 @@ auto tag_invoke(deserialize_tag,simdjson_value& val,Vec2& payload){
     return simdjson::SUCCESS;
 }
 
-template <typename builder_type>
-void tag_invoke(serialize_tag, builder_type& builder,const Color& payload){
+auto tag_invoke(deserialize_tag,ondemand::value& val,Vec2& payload){
+    ondemand::object obj;
+    auto error = val.get_object().get(obj);
+    if(error){
+        return error;
+    }
+    if((error=obj["x"].get(payload.x))){
+        return error;
+    }
+    if((error=obj["y"].get(payload.y))){
+        return error;
+    }
+    return simdjson::SUCCESS;
+}
+
+void tag_invoke(serialize_tag, builder::string_builder& builder,const Color& payload){
     builder.start_object();
     builder.template append_key_value<"r">(payload.r);
     builder.append_comma();
@@ -50,8 +64,7 @@ void tag_invoke(serialize_tag, builder_type& builder,const Color& payload){
     builder.end_object();
 }
 
-template<typename simdjson_value>
-auto tag_invoke(deserialize_tag,simdjson_value& val,Color& payload){
+auto tag_invoke(deserialize_tag,ondemand::document& val,Color& payload){
     ondemand::object obj;
     auto error = val.get_object().get(obj);
     if(error){
@@ -72,8 +85,28 @@ auto tag_invoke(deserialize_tag,simdjson_value& val,Color& payload){
     return simdjson::SUCCESS;
 }
 
-template <typename builder_type>
-void tag_invoke(serialize_tag, builder_type& builder,const Rect& payload){
+auto tag_invoke(deserialize_tag,ondemand::value& val,Color& payload){
+    ondemand::object obj;
+    auto error = val.get_object().get(obj);
+    if(error){
+        return error;
+    }
+    if((error=obj["r"].get(payload.r))){
+        return error;
+    }
+    if((error=obj["g"].get(payload.g))){
+        return error;
+    }
+    if((error=obj["b"].get(payload.b))){
+        return error;
+    }
+    if((error=obj["a"].get(payload.a))){
+        return error;
+    }
+    return simdjson::SUCCESS;
+}
+
+void tag_invoke(serialize_tag, builder::string_builder& builder,const Rect& payload){
     builder.start_object();
     builder.template append_key_value<"m_center">(payload.m_center);
     builder.append_comma();
@@ -81,8 +114,7 @@ void tag_invoke(serialize_tag, builder_type& builder,const Rect& payload){
     builder.end_object();
 }
 
-template<typename simdjson_value>
-auto tag_invoke(deserialize_tag,simdjson_value& val,Rect& payload){
+auto tag_invoke(deserialize_tag,ondemand::document& val,Rect& payload){
     ondemand::object obj;
     auto error = val.get_object().get(obj);
     if(error){
@@ -97,8 +129,22 @@ auto tag_invoke(deserialize_tag,simdjson_value& val,Rect& payload){
     return simdjson::SUCCESS;
 }
 
-template <typename builder_type>
-void tag_invoke(serialize_tag, builder_type& builder,const Circle& payload){
+auto tag_invoke(deserialize_tag,ondemand::value& val,Rect& payload){
+    ondemand::object obj;
+    auto error = val.get_object().get(obj);
+    if(error){
+        return error;
+    }
+    if((error=obj["m_center"].get(payload.m_center))){
+        return error;
+    }
+    if((error=obj["m_half_size"].get(payload.m_half_size))){
+        return error;
+    }
+    return simdjson::SUCCESS;
+}
+
+void tag_invoke(serialize_tag, builder::string_builder& builder,const Circle& payload){
     builder.start_object();
     builder.template append_key_value<"m_radius">(payload.m_radius);
     builder.append_comma();
@@ -106,8 +152,7 @@ void tag_invoke(serialize_tag, builder_type& builder,const Circle& payload){
     builder.end_object();
 }
 
-template<typename simdjson_value>
-auto tag_invoke(deserialize_tag,simdjson_value& val,Circle& payload){
+auto tag_invoke(deserialize_tag,ondemand::document& val,Circle& payload){
     ondemand::object obj;
     auto error = val.get_object().get(obj);
     if(error){
@@ -122,8 +167,22 @@ auto tag_invoke(deserialize_tag,simdjson_value& val,Circle& payload){
     return simdjson::SUCCESS;
 }
 
-template <typename builder_type>
-void tag_invoke(serialize_tag, builder_type& builder,const Region& payload){
+auto tag_invoke(deserialize_tag,ondemand::value& val,Circle& payload){
+    ondemand::object obj;
+    auto error = val.get_object().get(obj);
+    if(error){
+        return error;
+    }
+    if((error=obj["m_radius"].get(payload.m_radius))){
+        return error;
+    }
+    if((error=obj["m_position"].get(payload.m_position))){
+        return error;
+    }
+    return simdjson::SUCCESS;
+}
+
+void tag_invoke(serialize_tag, builder::string_builder& builder,const Region& payload){
     builder.start_object();
     builder.template append_key_value<"m_topleft">(payload.m_topleft);
     builder.append_comma();
@@ -131,8 +190,7 @@ void tag_invoke(serialize_tag, builder_type& builder,const Region& payload){
     builder.end_object();
 }
 
-template<typename simdjson_value>
-auto tag_invoke(deserialize_tag,simdjson_value& val,Region& payload){
+auto tag_invoke(deserialize_tag,ondemand::document& val,Region& payload){
     ondemand::object obj;
     auto error = val.get_object().get(obj);
     if(error){
@@ -147,8 +205,22 @@ auto tag_invoke(deserialize_tag,simdjson_value& val,Region& payload){
     return simdjson::SUCCESS;
 }
 
-template <typename builder_type>
-void tag_invoke(serialize_tag, builder_type& builder,const Transform& payload){
+auto tag_invoke(deserialize_tag,ondemand::value& val,Region& payload){
+    ondemand::object obj;
+    auto error = val.get_object().get(obj);
+    if(error){
+        return error;
+    }
+    if((error=obj["m_topleft"].get(payload.m_topleft))){
+        return error;
+    }
+    if((error=obj["m_size"].get(payload.m_size))){
+        return error;
+    }
+    return simdjson::SUCCESS;
+}
+
+void tag_invoke(serialize_tag, builder::string_builder& builder,const Transform& payload){
     builder.start_object();
     builder.template append_key_value<"m_position">(payload.m_position);
     builder.append_comma();
@@ -158,8 +230,25 @@ void tag_invoke(serialize_tag, builder_type& builder,const Transform& payload){
     builder.end_object();
 }
 
-template<typename simdjson_value>
-auto tag_invoke(deserialize_tag,simdjson_value& val,Transform& payload){
+auto tag_invoke(deserialize_tag,ondemand::document& val,Transform& payload){
+    ondemand::object obj;
+    auto error = val.get_object().get(obj);
+    if(error){
+        return error;
+    }
+    if((error=obj["m_position"].get(payload.m_position))){
+        return error;
+    }
+    if((error=obj["m_rotation"].get(payload.m_rotation))){
+        return error;
+    }
+    if((error=obj["m_scale"].get(payload.m_scale))){
+        return error;
+    }
+    return simdjson::SUCCESS;
+}
+
+auto tag_invoke(deserialize_tag,ondemand::value& val,Transform& payload){
     ondemand::object obj;
     auto error = val.get_object().get(obj);
     if(error){

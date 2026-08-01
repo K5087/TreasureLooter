@@ -1,4 +1,4 @@
-export module flip:type;
+export module flip;
 
 export enum class Flip {
     None = 0,

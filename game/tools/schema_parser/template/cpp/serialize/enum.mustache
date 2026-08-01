@@ -1,5 +1,4 @@
-template <typename builder_type>
-void tag_invoke(serialize_tag, builder_type& builder,const {{type}}& payload){
+void tag_invoke(serialize_tag, builder::string_builder& builder,const {{type}}& payload){
     switch (payload) {
 {{#fields}}
     case {{type}}::{{name}}:
@@ -9,8 +8,7 @@ void tag_invoke(serialize_tag, builder_type& builder,const {{type}}& payload){
     }
 }
 
-template<typename simdjson_value>
-auto tag_invoke(deserialize_tag,simdjson_value& val,{{type}}& payload){
+auto tag_invoke(deserialize_tag, ondemand::document& val,{{type}}& payload){
     std::string_view value;
 
     auto error = val.get_string().get(value);
@@ -28,8 +26,25 @@ auto tag_invoke(deserialize_tag,simdjson_value& val,{{type}}& payload){
     return simdjson::INCORRECT_TYPE;
 }
 
-template <typename builder_type>
-void tag_invoke(serialize_tag, builder_type& builder,const Flags<{{type}}>& payload){
+auto tag_invoke(deserialize_tag, ondemand::value& val,{{type}}& payload){
+    std::string_view value;
+
+    auto error = val.get_string().get(value);
+    if (error) {
+        return error;
+    }
+
+{{#fields}}
+    if (value == "{{name}}") {
+        payload = {{type}}::{{name}};
+        return simdjson::SUCCESS;
+    }
+{{/fields}}
+
+    return simdjson::INCORRECT_TYPE;
+}
+
+void tag_invoke(serialize_tag, builder::string_builder& builder,const Flags<{{type}}>& payload){
     builder.start_array();
 {{#is_zero}}
     if(payload.Value()==0){
@@ -47,8 +62,35 @@ void tag_invoke(serialize_tag, builder_type& builder,const Flags<{{type}}>& payl
     builder.end_array();
 }
 
-template<typename simdjson_value>
-auto tag_invoke(deserialize_tag,simdjson_value& val,Flags<{{type}}>& payload){
+auto tag_invoke(deserialize_tag, ondemand::document& val,Flags<{{type}}>& payload){
+    simdjson::ondemand::array values;
+
+    auto error = val.get_array().get(values);
+    if (error) {
+        return error;
+    }
+    payload  = {};
+
+    for(auto item:values){
+        std::string_view value;
+        if(auto error = item.get_string().get(value)){
+            return error;
+        }
+        bool match = false;
+{{#fields}}
+        if (value == "{{name}}") {
+            payload |= {{type}}::{{name}};
+            match = true;
+        }
+{{/fields}}
+        if (!match) {
+            return simdjson::INCORRECT_TYPE;
+        }
+    }
+    return simdjson::SUCCESS;
+}
+
+auto tag_invoke(deserialize_tag, ondemand::value& val,Flags<{{type}}>& payload){
     simdjson::ondemand::array values;
 
     auto error = val.get_array().get(values);

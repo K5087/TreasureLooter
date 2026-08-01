@@ -27,8 +27,10 @@ struct EnumInfo {
 };
 
 struct SchemaInfo {
-    std::vector<std::string> includes;
+    std::string name;
     std::filesystem::path filename;
+
+    std::vector<std::string> includes;
     std::vector<ClassInfo> classes;
     std::vector<EnumInfo> enums;
 };

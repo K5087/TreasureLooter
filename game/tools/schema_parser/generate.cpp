@@ -4,6 +4,14 @@ module generate;
 
 import common;
 
+bool is_import(const std::string& name, std::filesystem::path dir) {
+    return std::filesystem::exists(dir / (name + ".cppm"));
+};
+
+bool has_serialize(const std::string& name, std::filesystem::path dir) {
+    return std::filesystem::exists(dir / (name + ".cppm")) or name == "image";
+};
+
 namespace lua {
 std::string generateClassCode(const ClassInfo& info) {
     auto& field_mustache = MustacheManager::GetInst().lua_field;
@@ -123,10 +131,18 @@ std::string generate(const SchemaInfo& schema_info) {
                                                    generate(schema)};
     }
 
+    kainjow::mustache::data import_datas{kainjow::mustache::data::type::list};
+    for (auto& include : schema_info.includes) {
+        if (has_serialize(include, schema_info.filename.parent_path())) {
+            import_datas << kainjow::mustache::data{"name", include};
+        }
+    }
+
     auto& schema_mustache = MustacheManager::GetInst().cpp_schema_serialize;
     kainjow::mustache::data schema_data;
     schema_data.set("serializes", serialize_datas);
     schema_data.set("name", schema_info.filename.stem().string());
+    schema_data.set("imports", import_datas);
     schema_data.set("has_enum", schema_info.enums.size() > 0);
     return schema_mustache.render(schema_data);
 }
@@ -169,10 +185,6 @@ std::string generate(const ClassInfo& info) {
     return display_mustache.render(display_data);
 }
 
-bool is_import(const std::string& name, std::filesystem::path dir) {
-    return std::filesystem::exists(dir / (name + ".cppm"));
-};
-
 std::string generate(const SchemaInfo& schema_info) {
     kainjow::mustache::data display_datas{kainjow::mustache::data::type::list};
     for (auto& schema : schema_info.classes) {
@@ -189,8 +201,7 @@ std::string generate(const SchemaInfo& schema_info) {
     kainjow::mustache::data import_datas{kainjow::mustache::data::type::list};
     for (auto& include : schema_info.includes) {
         if (is_import(include, schema_info.filename.parent_path())) {
-            import_datas << kainjow::mustache::data{"name",
-                                                    include + ".display"};
+            import_datas << kainjow::mustache::data{"name", include};
         }
     }
     auto& schema_mustache = MustacheManager::GetInst().cpp_schema_display;

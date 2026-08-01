@@ -1,10 +1,10 @@
-module;
 export module asset;
 
 import path;
 import storage;
 import serialize;
 
+import simdjson;
 import std;
 
 export {

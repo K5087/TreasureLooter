@@ -1,7 +1,7 @@
 module;
-export module relationship;
-export import :type;
-export import :serialize;
+export module relationship.manager;
+
+import relationship;
 
 import entity;
 import manager;

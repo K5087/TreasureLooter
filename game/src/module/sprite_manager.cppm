@@ -1,8 +1,7 @@
 module;
-export module sprite;
+export module sprite.manager;
 
-export import :type;
-export import :serialize;
+import sprite;
 
 import manager;
 

@@ -19,8 +19,10 @@ static TSSymbol field_symbol = get_symbol(language, "field_identifier");
 static TSSymbol access_symbol = get_symbol(language, "access_specifier");
 static TSSymbol union_symbol = get_symbol(language, "union_specifier");
 
-std::optional<std::string> parse_include(const TSNode& node,
-                                         std::string_view source_code) {
+static TSSymbol module_symbol = get_symbol(language, "module_declaration")
+
+    std::optional<std::string>
+    parse_include(const TSNode& node, std::string_view source_code) {
     TSNode path = find_field(node, "path");
     return std::string(get_node_string(path, source_code));
 }
@@ -192,6 +194,9 @@ void Parser::parse_node(SchemaInfo& info, const TSNode& node,
             // if (include) {
             //     info.includes.push_back(*include);
             // }
+        } else if (child_symbol == module_symbol) {
+            auto name_node = find_field(child, "name");
+            info.name = ts_node_string(name_node);
         } else if (child_symbol == import_symbol) {
             auto import = parse_import(child, source_code);
             if (import) {

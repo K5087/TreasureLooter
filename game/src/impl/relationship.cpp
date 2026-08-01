@@ -1,6 +1,6 @@
 module;
 #include <log.hpp>
-module relationship;
+module relationship.manager;
 
 import log;
 import entity;
@@ -17,18 +17,17 @@ void RelationshipManager::Update() {
         return;
     }
     auto &transform_manager = Context::GetInst().m_transform_manager;
-     Transform *root_transform = transform_manager->Get(m_root);
-     if(!root_transform){
-         LOGE("[Component][RelationshipManager] root eneity don't has transform");
-         return;
-     }
+    Transform *root_transform = transform_manager->Get(m_root);
+    if (!root_transform) {
+        LOGE(
+            "[Component][RelationshipManager] root eneity don't has transform");
+        return;
+    }
 
-     root_transform->UpdateMat(nullptr);
+    root_transform->UpdateMat(nullptr);
     for (auto &child : relationship->m_children) {
         updatePoseRecursive(*root_transform, child);
     }
-
-
 }
 
 void RelationshipManager::updatePoseRecursive(const Transform &parent,

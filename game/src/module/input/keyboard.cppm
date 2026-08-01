@@ -2,14 +2,16 @@ module;
 #include <SDL3/SDL.h>
 export module keyboard;
 
-import std;
+import key;
 import button;
+
+import std;
 
 export {
 class KeyboardButton : public Button {
 public:
     friend class Keyboard;
-    explicit KeyboardButton(SDL_Keycode key);
+    explicit KeyboardButton(Key key);
 
     virtual bool IsPressing() const override;
     virtual bool IsReleasing() const override;
@@ -17,7 +19,7 @@ public:
     virtual bool IsPressed() const override;
 
 private:
-    SDL_Keycode m_key;
+    Key m_key;
     bool m_is_press = false;
     bool m_last_press = false;
     bool m_has_handled_event = false;
@@ -31,9 +33,9 @@ public:
     void HandleEvent(const SDL_KeyboardEvent& event);
     void Update();
 
-    const KeyboardButton& Get(SDL_Keycode key);
+    const KeyboardButton& Get(Key key);
 
 private:
-    std::unordered_map<SDL_Keycode, KeyboardButton> m_buttons;
+    std::unordered_map<Key, KeyboardButton> m_buttons;
 };
 }

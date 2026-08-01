@@ -2,7 +2,7 @@ module;
 #include <SDL3/SDL.h>
 module keyboard;
 
-KeyboardButton::KeyboardButton(SDL_Keycode key) : m_key(key) {}
+KeyboardButton::KeyboardButton(Key key) : m_key(key) {}
 
 bool KeyboardButton::IsPressing() const {
     return m_last_press && m_is_press;
@@ -21,7 +21,7 @@ bool KeyboardButton::IsPressed() const {
 }
 
 void KeyboardButton::handleEvent(const SDL_KeyboardEvent& event) {
-    if (event.key != m_key) {
+    if (static_cast<Key>(event.key) != m_key) {
         return;
     }
     m_last_press = m_is_press;
@@ -41,10 +41,12 @@ void KeyboardButton::update() {
 }
 
 void Keyboard::HandleEvent(const SDL_KeyboardEvent& event) {
-    if (auto it = m_buttons.find(event.key); it != m_buttons.end()) {
+    if (auto it = m_buttons.find(static_cast<Key>(event.key));
+        it != m_buttons.end()) {
         it->second.handleEvent(event);
     } else {
-        auto button = m_buttons.emplace(event.key, KeyboardButton(event.key));
+        auto key = static_cast<Key>(event.key);
+        auto button = m_buttons.emplace(key, KeyboardButton(key));
         button.first->second.handleEvent(event);
     }
 }
@@ -55,6 +57,6 @@ void Keyboard::Update() {
     }
 }
 
-const KeyboardButton& Keyboard::Get(SDL_Keycode key) {
+const KeyboardButton& Keyboard::Get(Key key) {
     return m_buttons.try_emplace(key, key).first->second;
 }

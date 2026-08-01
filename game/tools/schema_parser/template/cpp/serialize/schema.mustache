@@ -3,14 +3,18 @@
 /////////////////////////////////////////////////////////////////////
 
 module;
-export module {{name}}:serialize;
+export module {{name}}.serialize;
+export import {{name}};
 
-import :type;
-import simdjson;
-import std;
+{{#imports}}
+import {{name}}.serialize;
+{{/imports}}
 {{#has_enum}}
 import flag;
 {{/has_enum}}
+
+import simdjson;
+import std;
 
 export namespace simdjson{
 

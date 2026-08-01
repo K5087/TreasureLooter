@@ -3,24 +3,36 @@
 /////////////////////////////////////////////////////////////////////
 
 module;
-export module relationship:serialize;
+export module relationship.serialize;
+export import relationship;
 
-import :type;
+
+
+
 import simdjson;
 import std;
 
-
 export namespace simdjson{
 
-template <typename builder_type>
-void tag_invoke(serialize_tag, builder_type& builder,const Relationship& payload){
+void tag_invoke(serialize_tag, builder::string_builder& builder,const Relationship& payload){
     builder.start_object();
     builder.template append_key_value<"m_children">(payload.m_children);
     builder.end_object();
 }
 
-template<typename simdjson_value>
-auto tag_invoke(deserialize_tag,simdjson_value& val,Relationship& payload){
+auto tag_invoke(deserialize_tag,ondemand::document& val,Relationship& payload){
+    ondemand::object obj;
+    auto error = val.get_object().get(obj);
+    if(error){
+        return error;
+    }
+    if((error=obj["m_children"].get(payload.m_children))){
+        return error;
+    }
+    return simdjson::SUCCESS;
+}
+
+auto tag_invoke(deserialize_tag,ondemand::value& val,Relationship& payload){
     ondemand::object obj;
     auto error = val.get_object().get(obj);
     if(error){

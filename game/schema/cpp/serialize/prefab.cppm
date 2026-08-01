@@ -3,17 +3,20 @@
 /////////////////////////////////////////////////////////////////////
 
 module;
-export module prefab:serialize;
+export module prefab.serialize;
+export import prefab;
 
-import :type;
+import sprite.serialize;
+import math.serialize;
+import relationship.serialize;
+
+
 import simdjson;
 import std;
 
-
 export namespace simdjson{
 
-template <typename builder_type>
-void tag_invoke(serialize_tag, builder_type& builder,const Prefab& payload){
+void tag_invoke(serialize_tag, builder::string_builder& builder,const Prefab& payload){
     builder.start_object();
     builder.template append_key_value<"m_sprite">(payload.m_sprite);
     builder.append_comma();
@@ -23,8 +26,7 @@ void tag_invoke(serialize_tag, builder_type& builder,const Prefab& payload){
     builder.end_object();
 }
 
-template<typename simdjson_value>
-auto tag_invoke(deserialize_tag,simdjson_value& val,Prefab& payload){
+auto tag_invoke(deserialize_tag,ondemand::document& val,Prefab& payload){
     ondemand::object obj;
     auto error = val.get_object().get(obj);
     if(error){
@@ -42,8 +44,25 @@ auto tag_invoke(deserialize_tag,simdjson_value& val,Prefab& payload){
     return simdjson::SUCCESS;
 }
 
-template <typename builder_type>
-void tag_invoke(serialize_tag, builder_type& builder,const EntityInstance& payload){
+auto tag_invoke(deserialize_tag,ondemand::value& val,Prefab& payload){
+    ondemand::object obj;
+    auto error = val.get_object().get(obj);
+    if(error){
+        return error;
+    }
+    if((error=obj["m_sprite"].get(payload.m_sprite))){
+        return error;
+    }
+    if((error=obj["m_transform"].get(payload.m_transform))){
+        return error;
+    }
+    if((error=obj["m_relation"].get(payload.m_relation))){
+        return error;
+    }
+    return simdjson::SUCCESS;
+}
+
+void tag_invoke(serialize_tag, builder::string_builder& builder,const EntityInstance& payload){
     builder.start_object();
     builder.template append_key_value<"m_entity">(payload.m_entity);
     builder.append_comma();
@@ -51,8 +70,22 @@ void tag_invoke(serialize_tag, builder_type& builder,const EntityInstance& paylo
     builder.end_object();
 }
 
-template<typename simdjson_value>
-auto tag_invoke(deserialize_tag,simdjson_value& val,EntityInstance& payload){
+auto tag_invoke(deserialize_tag,ondemand::document& val,EntityInstance& payload){
+    ondemand::object obj;
+    auto error = val.get_object().get(obj);
+    if(error){
+        return error;
+    }
+    if((error=obj["m_entity"].get(payload.m_entity))){
+        return error;
+    }
+    if((error=obj["m_data"].get(payload.m_data))){
+        return error;
+    }
+    return simdjson::SUCCESS;
+}
+
+auto tag_invoke(deserialize_tag,ondemand::value& val,EntityInstance& payload){
     ondemand::object obj;
     auto error = val.get_object().get(obj);
     if(error){

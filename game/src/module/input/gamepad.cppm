@@ -2,6 +2,7 @@ module;
 #include <SDL3/SDL.h>
 export module gamepad;
 
+import padkey;
 import button;
 import math;
 import std;
@@ -52,8 +53,8 @@ public:
 
     SDL_JoystickID GetID() const;
 
-    const GamepadButton &GetButton(SDL_GamepadButton button) const;
-    const GamepadAxis &GetAxis(SDL_GamepadAxis axis) const;
+    const GamepadButton &GetButton(GamepadButtonType button) const;
+    const GamepadAxis &GetAxis(GamepadAxisType axis) const;
 
 private:
     SDL_JoystickID m_id;

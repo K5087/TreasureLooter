@@ -1,5 +1,5 @@
 module;
-export module transform;
+export module transform.manager;
 
 import math;
 import manager;

@@ -7,6 +7,7 @@ module;
 
 module context;
 
+import padkey;
 import image;
 import inspector;
 import renderer;
@@ -14,9 +15,12 @@ import window;
 import math;
 import serialize;
 import asset;
-import prefab;
+import prefab.serialize;
 import path;
 import log;
+
+import key;
+import inputconfig.serialize;
 
 std::unique_ptr<Context> Context::instance;
 
@@ -38,6 +42,7 @@ Context& Context::GetInst() {
 }
 
 Context::~Context() {
+    m_input_manager.reset();
     m_gamepad_manager.reset();
     m_touch.reset();
     m_mouse.reset();
@@ -155,6 +160,10 @@ Context::Context() {
     m_mouse = std::make_unique<Mouse>();
     m_touch = std::make_unique<Touch>();
     m_gamepad_manager = std::make_unique<GamepadManager>();
+
+    m_input_manager = std::make_unique<InputManager>(
+        m_keyboard.get(), m_gamepad_manager.get(),
+        "assets/gpa/input_config.json");
 }
 
 void Context::logicUpdate() {
@@ -174,25 +183,15 @@ void Context::gameLogicUpdate() {
     if (gamepads.empty()) {
         return;
     }
-    auto& gamepad = gamepads.begin()->second;
+    auto& action = m_input_manager->GetAction("Rotate");
+    auto& x_axis = m_input_manager->GetAxis("MoveHorizontal");
+    auto& y_axis = m_input_manager->GetAxis("MoveVertical");
 
-    if (gamepad.GetButton(SDL_GAMEPAD_BUTTON_WEST).IsPressing()) {
-        transform->m_position.x -= 0.1;
-    }
-    if (m_keyboard->Get(SDLK_D).IsPressing()) {
-        transform->m_position.x += 0.1;
-    }
-    if (m_keyboard->Get(SDLK_W).IsPressing()) {
-        transform->m_position.y -= 0.1;
-    }
-    if (m_keyboard->Get(SDLK_S).IsPressing()) {
-        transform->m_position.y += 0.1;
-    }
-    if (m_keyboard->Get(SDLK_J).IsPressed()) {
+    transform->m_position.x += 0.1f * x_axis.Value();
+
+    transform->m_position.y += 0.1f * y_axis.Value();
+    if (action.IsPressed()) {
         transform->m_rotation += 10;
-    }
-    if (m_keyboard->Get(SDLK_K).IsReleased()) {
-        transform->m_rotation -= 10;
     }
 }
 
@@ -227,8 +226,8 @@ void Context::renderUpdate() {
                         finger.Position().y, finger.Offset().x,
                         finger.Offset().y);
         }
-        ImGui::End();
     }
+    ImGui::End();
 
     m_sprite_manager->Update();
 

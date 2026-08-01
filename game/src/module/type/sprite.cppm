@@ -1,6 +1,6 @@
 module;
 
-export module sprite:type;
+export module sprite;
 
 import flag;
 import image;

@@ -1,0 +1,27 @@
+{
+	"m_action": [{ "m_name": "Rotate", "m_keyboard": ["J"], "m_gamepad": [] }],
+	"m_axis": [
+		{
+			"m_name": "MoveHorizontal",
+			"m_keyboard": [
+				{ "m_key": "A", "m_scale": -1.0 },
+				{ "m_key": "D", "m_scale": 1.0 }
+			],
+			"m_gamepad_axis": [],
+			"m_gamepad_button": [],
+			"m_mouse_vertical": null,
+			"m_mouse_horizontal": null
+		},
+		{
+			"m_name": "MoveVertical",
+			"m_keyboard": [
+				{ "m_key": "W", "m_scale": -1.0 },
+				{ "m_key": "S", "m_scale": 1.0 }
+			],
+			"m_gamepad_axis": [],
+			"m_gamepad_button": [],
+			"m_mouse_vertical": null,
+			"m_mouse_horizontal": null
+		}
+	]
+}

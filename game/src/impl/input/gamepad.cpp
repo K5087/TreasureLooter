@@ -70,15 +70,15 @@ Gamepad::Gamepad(SDL_JoystickID id) : m_id(id) {
     }
 }
 
-const GamepadButton& Gamepad::GetButton(SDL_GamepadButton button) const {
-    if (button == SDL_GAMEPAD_BUTTON_INVALID) {
+const GamepadButton& Gamepad::GetButton(GamepadButtonType button) const {
+    if (button == GamepadButtonType::Invalid) {
         return InvalidButton;
     }
     return *m_buttons[static_cast<std::size_t>(button)];
 }
 
-const GamepadAxis& Gamepad::GetAxis(SDL_GamepadAxis axis) const {
-    if (axis == SDL_GAMEPAD_AXIS_INVALID) {
+const GamepadAxis& Gamepad::GetAxis(GamepadAxisType axis) const {
+    if (axis == GamepadAxisType::Invalid) {
         return InvalidAxis;
     }
     return *m_axises[static_cast<std::size_t>(axis)];

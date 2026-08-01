@@ -12,13 +12,20 @@ using ::simdjson::to_json;
 
 using ::simdjson::error_message;
 
+namespace builder = SIMDJSON_BUILTIN_IMPLEMENTATION::builder;
 namespace ondemand = SIMDJSON_BUILTIN_IMPLEMENTATION::ondemand;
 
 namespace SIMDJSON_BUILTIN_IMPLEMENTATION {
+namespace builder {
+using ::simdjson::builder::string_builder;
+}
+
 namespace ondemand {
+
+using ::simdjson::ondemand::array;
 using ::simdjson::ondemand::object;
 using ::simdjson::ondemand::parser;
-using ::simdjson::ondemand::array;
+using ::simdjson::ondemand::value;
 
 using ::simdjson::ondemand::document;
 }  // namespace ondemand

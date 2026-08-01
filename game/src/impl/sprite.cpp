@@ -1,7 +1,8 @@
 module;
 #include <SDL3/SDL.h>
-module sprite;
+module sprite.manager;
 
+import sprite;
 import context;
 import renderer;
 import math;

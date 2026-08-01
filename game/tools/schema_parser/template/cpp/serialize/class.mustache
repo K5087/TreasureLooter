@@ -1,5 +1,4 @@
-template <typename builder_type>
-void tag_invoke(serialize_tag, builder_type& builder,const {{type}}& payload){
+void tag_invoke(serialize_tag, builder::string_builder& builder,const {{type}}& payload){
     builder.start_object();
 {{#fields}}
     builder.template append_key_value<"{{name}}">(payload.{{name}});
@@ -9,8 +8,21 @@ void tag_invoke(serialize_tag, builder_type& builder,const {{type}}& payload){
     builder.end_object();
 }
 
-template<typename simdjson_value>
-auto tag_invoke(deserialize_tag,simdjson_value& val,{{type}}& payload){
+auto tag_invoke(deserialize_tag,ondemand::document& val,{{type}}& payload){
+    ondemand::object obj;
+    auto error = val.get_object().get(obj);
+    if(error){
+        return error;
+    }
+    {{#fields}}
+    if((error=obj["{{name}}"].get(payload.{{name}}))){
+        return error;
+    }
+    {{/fields}}
+    return simdjson::SUCCESS;
+}
+
+auto tag_invoke(deserialize_tag,ondemand::value& val,{{type}}& payload){
     ondemand::object obj;
     auto error = val.get_object().get(obj);
     if(error){

@@ -7,7 +7,6 @@ export module image;
 import log;
 import path;
 import math;
-import simdjson;
 
 import std;
 export {
@@ -46,29 +45,4 @@ private:
 };
 
 Image *LoadImage(const Path &filename);
-
-namespace simdjson {
-template <typename builder_type>
-void tag_invoke(serialize_tag, builder_type &builder, const Image *payload) {
-    std::string path = payload->Filename().string();
-    builder.append(simdjson::pad(path));
-}
-
-template <typename simdjson_value>
-auto tag_invoke(deserialize_tag, simdjson_value &val, Image *&payload) {
-    std::string_view value;
-    auto error = val.get_string().get(value);
-    if (error) {
-        return error;
-    }
-
-    payload = LoadImage(value);
-    if (!payload) {
-        LOGE("Failed to load image: {}", value);
-        return simdjson::SUCCESS;
-    }
-
-    return simdjson::SUCCESS;
-}
-}  // namespace simdjson
 }

@@ -1,6 +1,6 @@
 module;
 
-export module prefab:type;
+export module prefab;
 
 import entity;
 import sprite;
