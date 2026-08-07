@@ -1,0 +1,30 @@
+{
+	"uuid": "c35926e0-0000-0000-0000-000000000000",
+	"payload": {
+		"action": [{ "name": "Attack", "keyboard": ["J"], "gamepad": [] }],
+		"axis": [
+			{
+				"name": "MoveX",
+				"keyboard": [
+					{ "key": "A", "scale": -1.0 },
+					{ "key": "D", "scale": 1.0 }
+				],
+				"gamepad_axis": [],
+				"gamepad_button": [],
+				"mouse_vertical": null,
+				"mouse_horizontal": null
+			},
+			{
+				"name": "MoveY",
+				"keyboard": [
+					{ "key": "W", "scale": -1.0 },
+					{ "key": "S", "scale": 1.0 }
+				],
+				"gamepad_axis": [],
+				"gamepad_button": [],
+				"mouse_vertical": null,
+				"mouse_horizontal": null
+			}
+		]
+	}
+}

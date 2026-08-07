@@ -1,7 +1,7 @@
 void tag_invoke(serialize_tag, builder::string_builder& builder,const {{type}}& payload){
     builder.start_object();
 {{#fields}}
-    builder.template append_key_value<"{{name}}">(payload.{{name}});
+    builder.template append_key_value<"{{normal_name}}">(payload.{{name}});
 {{#not_end}}
     builder.append_comma();
 {{/not_end}}{{/fields}}
@@ -15,7 +15,7 @@ auto tag_invoke(deserialize_tag,ondemand::document& val,{{type}}& payload){
         return error;
     }
     {{#fields}}
-    if((error=obj["{{name}}"].get(payload.{{name}}))){
+    if((error=obj["{{normal_name}}"].get(payload.{{name}}))){
         return error;
     }
     {{/fields}}
@@ -29,7 +29,7 @@ auto tag_invoke(deserialize_tag,ondemand::value& val,{{type}}& payload){
         return error;
     }
     {{#fields}}
-    if((error=obj["{{name}}"].get(payload.{{name}}))){
+    if((error=obj["{{normal_name}}"].get(payload.{{name}}))){
         return error;
     }
     {{/fields}}

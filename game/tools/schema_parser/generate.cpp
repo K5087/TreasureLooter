@@ -12,6 +12,14 @@ bool has_serialize(const std::string& name, std::filesystem::path dir) {
     return std::filesystem::exists(dir / (name + ".cppm")) or name == "image";
 };
 
+std::string normal_name(const std::string& name) {
+    if (name.starts_with("m_")) {
+        return name.substr(2, name.size() - 2);
+    } else {
+        return name;
+    }
+};
+
 namespace lua {
 std::string generateClassCode(const ClassInfo& info) {
     auto& field_mustache = MustacheManager::GetInst().lua_field;
@@ -58,7 +66,8 @@ std::string generateEnumCode(const EnumInfo& info) {
     for (auto& item : info.items) {
         std::string data = item.name;
         if (item.value) {
-            data += " = " + std::to_string(*item.value) + ",";
+            // data += " = " + std::to_string(*item.value) + ",";
+            data += " = " + *item.value + ",";
         }
         item_datas << kainjow::mustache::data{"item", data};
     }
@@ -86,7 +95,7 @@ std::string generate(const EnumInfo& info) {
         item_data.set("type", info.name);
         item_data.set("not_first", i != 0);
         item_datas << item_data;
-        if (item.value == 0) {
+        if (item.value == "0") {
             serialize_data.set("zero_name", item.name);
             serialize_data.set("is_zero", true);
         } else {
@@ -106,6 +115,7 @@ std::string generate(const ClassInfo& info) {
         auto& field = info.fields[i];
         kainjow::mustache::data field_data;
         field_data.set("name", field.name);
+        field_data.set("normal_name", normal_name(field.name));
         field_data.set("not_end", i != info.fields.size() - 1);
         field_datas << field_data;
     }
@@ -160,7 +170,8 @@ std::string generate(const EnumInfo& info) {
         item_data.set("item", item.name);
         item_data.set("type", info.name);
         if (item.value) {
-            item_data.set("idx", std::to_string(*item.value));
+            item_data.set("idx", std::to_string(i));
+            // item_data.set("idx", std::to_string(*item.value));
         }
         item_datas << item_data;
     }
@@ -176,6 +187,7 @@ std::string generate(const ClassInfo& info) {
         auto& field = info.fields[i];
         kainjow::mustache::data field_data;
         field_data.set("field", field.name);
+        field_data.set("normal_field", normal_name(field.name));
         field_datas << field_data;
     }
     kainjow::mustache::data display_data;

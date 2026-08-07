@@ -13,7 +13,7 @@ std::string Serialize(const T& payload) {
     auto result = simdjson::to_json(payload);
 
     if (result.error()) {
-        LOGE("Serialize error: ", simdjson::error_message(result.error()));
+        LOGE("Serialize error: {}", simdjson::error_message(result.error()));
         return "";
     }
     return result.value();
@@ -26,7 +26,7 @@ void Deserialize(std::string& json, T& payload) {
     simdjson::error_code result = doc.get(payload);
 
     if (result) {
-        LOGE("Deserialize error: ", simdjson::error_message(result));
+        LOGE("Deserialize error: {}", simdjson::error_message(result));
         return;
     }
 }

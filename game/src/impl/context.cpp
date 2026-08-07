@@ -8,15 +8,10 @@ module;
 module context;
 
 import padkey;
-import image;
-import inspector;
-import renderer;
-import window;
 import math;
 import serialize;
 import asset;
 import prefab.serialize;
-import path;
 import log;
 
 import key;
@@ -43,7 +38,11 @@ Context& Context::GetInst() {
 
 Context::~Context() {
     m_input_manager.reset();
+    m_generic_assets_manager.reset();
     m_gamepad_manager.reset();
+#ifdef TL_ENABLE_EDITOR
+    m_editor.reset();
+#endif  // TL_ENABLE_EDITOR
     m_touch.reset();
     m_mouse.reset();
     m_keyboard.reset();
@@ -61,48 +60,14 @@ void Context::Update() {
     ///////// this is a test /////////////
     static bool executed = false;
     if (!executed) {
-        Entity entity1;
-        {
-            auto prefab =
-                LoadAsset<EntityInstance>(Path("assets/gpa/waggo.entity.json"));
-            entity1 = prefab.m_entity;
-            if (prefab.m_data.m_transform) {
-                m_transform_manager->RegisterEntity(
-                    prefab.m_entity, prefab.m_data.m_transform.value());
-            }
-            if (prefab.m_data.m_sprite) {
-                m_sprite_manager->RegisterEntity(
-                    prefab.m_entity, prefab.m_data.m_sprite.value());
-            }
-            if (prefab.m_data.m_relation) {
-                m_relation_manager->RegisterEntity(
-                    prefab.m_entity, prefab.m_data.m_relation.value());
-            }
-
-            m_relation_manager->Get(m_root_entity)
-                ->m_children.push_back(prefab.m_entity);
-        }
-        {
-            auto prefab = LoadAsset<EntityInstance>(
-                Path("assets/gpa/waggo2.entity.json"));
-            if (prefab.m_data.m_transform) {
-                m_transform_manager->RegisterEntity(
-                    prefab.m_entity, prefab.m_data.m_transform.value());
-            }
-            if (prefab.m_data.m_sprite) {
-                m_sprite_manager->RegisterEntity(
-                    prefab.m_entity, prefab.m_data.m_sprite.value());
-            }
-            if (prefab.m_data.m_relation) {
-                m_relation_manager->RegisterEntity(
-                    prefab.m_entity, prefab.m_data.m_relation.value());
-            }
-
-            m_relation_manager->Get(entity1)->m_children.push_back(
-                prefab.m_entity);
-        }
+        auto result =
+            LoadAsset<EntityInstance>(Path("assets/gpa/waggo.prefab.json"));
+        result.m_payload.m_entity = createEntity();
+        RegisterEntity(result.m_payload);
 
         executed = true;
+        auto root_relationship = m_relation_manager->Get(GetRootEntity());
+        root_relationship->m_children.push_back(result.m_payload.m_entity);
     }
     /////////////////////////////////////
 
@@ -150,6 +115,9 @@ Context::Context() {
 
     m_inspector = std::make_unique<Inspector>(*m_window, *m_renderer);
 
+#ifdef TL_ENABLE_EDITOR
+    m_editor = std::make_unique<Editor>();
+#endif  // TL_ENABLE_EDITOR
     m_root_entity = createEntity();
     m_transform_manager = std::make_unique<TransformManager>();
     m_sprite_manager = std::make_unique<SpriteManager>();
@@ -161,9 +129,10 @@ Context::Context() {
     m_touch = std::make_unique<Touch>();
     m_gamepad_manager = std::make_unique<GamepadManager>();
 
+    m_generic_assets_manager = std::make_unique<GenericAssetsManager>();
     m_input_manager = std::make_unique<InputManager>(
         m_keyboard.get(), m_gamepad_manager.get(),
-        "assets/gpa/input_config.json");
+        "assets/gpa/input.config.json");
 }
 
 void Context::logicUpdate() {
@@ -183,9 +152,9 @@ void Context::gameLogicUpdate() {
     if (gamepads.empty()) {
         return;
     }
-    auto& action = m_input_manager->GetAction("Rotate");
-    auto& x_axis = m_input_manager->GetAxis("MoveHorizontal");
-    auto& y_axis = m_input_manager->GetAxis("MoveVertical");
+    auto& action = m_input_manager->GetAction("Attack");
+    auto& x_axis = m_input_manager->GetAxis("MoveX");
+    auto& y_axis = m_input_manager->GetAxis("MoveY");
 
     transform->m_position.x += 0.1f * x_axis.Value();
 
@@ -232,6 +201,9 @@ void Context::renderUpdate() {
     m_sprite_manager->Update();
 
     m_inspector->Update();
+#ifdef TL_ENABLE_EDITOR
+    m_editor->Update();
+#endif  // TL_ENABLE_EDITOR
 
     m_inspector->EndFrame();
     m_renderer->Present();
@@ -239,4 +211,28 @@ void Context::renderUpdate() {
 
 Entity Context::createEntity() {
     return m_last_entity++;
+}
+
+void Context::RegisterEntity(const EntityInstance& entity_instance) {
+    if (entity_instance.m_data.m_sprite) {
+        m_sprite_manager->ReplaceComponent(
+            entity_instance.m_entity, entity_instance.m_data.m_sprite.value());
+        ;
+    }
+    if (entity_instance.m_data.m_transform) {
+        m_transform_manager->ReplaceComponent(
+            entity_instance.m_entity,
+            entity_instance.m_data.m_transform.value());
+    }
+    if (entity_instance.m_data.m_relation) {
+        m_relation_manager->ReplaceComponent(
+            entity_instance.m_entity,
+            entity_instance.m_data.m_relation.value());
+    }
+}
+
+void Context::RemoveEntity(Entity entity) {
+    m_sprite_manager->RemoveEntity(entity);
+    m_transform_manager->RemoveEntity(entity);
+    m_relation_manager->RemoveEntity(entity);
 }

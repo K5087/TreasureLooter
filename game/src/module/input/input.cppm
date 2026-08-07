@@ -64,6 +64,9 @@ public:
     const Axis& GetAxis(const std::string& name);
     const Action& GetAction(const std::string& name);
 
+    void SetConfig(Keyboard* keyboard, GamepadManager* gamepad_manager,
+                   const InputConfig& config);
+
 private:
     std::unordered_map<std::string, Axis> m_axis_mapping;
     std::unordered_map<std::string, Action> m_action_mapping;

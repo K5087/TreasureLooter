@@ -8,6 +8,7 @@ import std;
 #define get_symbol(language, name) \
     ts_language_symbol_for_name(language, name, std::strlen(name), true);
 
+static bool debug = false;
 static const TSLanguage* language = tree_sitter_cpp();
 static TSSymbol import_symbol = get_symbol(language, "import_declaration");
 static TSSymbol include_symbol = get_symbol(language, "preproc_include");
@@ -69,7 +70,7 @@ std::optional<ClassInfo> parse_class(const TSNode& node,
 
 std::optional<FieldInfo> parse_field(const TSNode& node,
                                      std::string_view source_code) {
-    TSNode impl;
+    TSNode impl = node;
     TSNode type = find_field(node, "type");
     if (ts_node_symbol(type) == union_symbol) {
         TSNode body = find_field(type, "body");
@@ -95,19 +96,19 @@ std::optional<FieldInfo> parse_field(const TSNode& node,
         node_symbol = ts_node_symbol(declarator);
     }
 
-    if (node_symbol == field_symbol) {
-        FieldInfo info;
-        TSNode type = find_field(impl, "type");
-        info.type = get_node_string(type, source_code);
-        info.name = get_node_string(declarator, source_code);
-        TSNode value = find_field(node, "default_value");
-        if (!ts_node_is_null(value)) {
-            info.value = get_node_string(value, source_code);
-        }
-
-        return info;
+    if (node_symbol != field_symbol) {
+        return std::nullopt;
     }
-    return std::nullopt;
+    FieldInfo info;
+    TSNode impl_type = find_field(impl, "type");
+    info.type = get_node_string(impl_type, source_code);
+    info.name = get_node_string(declarator, source_code);
+    TSNode value = find_field(node, "default_value");
+    if (!ts_node_is_null(value)) {
+        info.value = get_node_string(value, source_code);
+    }
+
+    return info;
 }
 
 std::optional<EnumInfo> parse_enum(const TSNode& node,
@@ -131,8 +132,9 @@ std::optional<EnumInfo> parse_enum(const TSNode& node,
             TSNode item_value = find_field(child, "value");
             item.name = get_node_string(item_name, source_code);
             if (!ts_node_is_null(item_value)) {
-                item.value = std::stoi(
-                    std::string(get_node_string(item_value, source_code)));
+                item.value = get_node_string(item_value, source_code);
+                // item.value = std::stoi(
+                //     std::string(get_node_string(item_value, source_code)));
             }
 
             info.items.push_back(item);
@@ -176,6 +178,9 @@ std::optional<SchemaInfo> Parser::parse_cpp(std::filesystem::path filename) {
 
     SchemaInfo schema_info;
     schema_info.filename = filename;
+    if (filename.filename() == "uuid.cppm") {
+        debug = true;
+    }
 
     // parse impl
     parse_node(schema_info, root_node, source_code);

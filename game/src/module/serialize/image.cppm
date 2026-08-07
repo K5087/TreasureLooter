@@ -1,35 +1,26 @@
-module;
-#include <log.hpp>
 export module image.serialize;
 
 export import image;
 
+import handle;
 import simdjson;
-import log;
-import std;
 
 export {
 namespace simdjson {
 void tag_invoke(serialize_tag, builder::string_builder &builder,
-                const Image *payload) {
-    std::string path = payload->Filename().string();
-    builder.append(simdjson::pad(path));
-}
+                const Image *payload);
 
-auto tag_invoke(deserialize_tag, ondemand::value &val, Image *&payload) {
-    std::string_view value;
-    auto error = val.get_string().get(value);
-    if (error) {
-        return error;
-    }
+simdjson::error_code tag_invoke(deserialize_tag, ondemand::document &val,
+                                Image *&payload);
+simdjson::error_code tag_invoke(deserialize_tag, ondemand::value &val,
+                                Image *&payload);
+void tag_invoke(serialize_tag tag, builder::string_builder &builder,
+                const Handle<Image> &payload);
 
-    payload = LoadImage(value);
-    if (!payload) {
-        LOGE("Failed to load image: {}", value);
-        return simdjson::SUCCESS;
-    }
+simdjson::error_code tag_invoke(deserialize_tag tag, ondemand::document &val,
+                                Handle<Image> &payload);
 
-    return simdjson::SUCCESS;
-}
+simdjson::error_code tag_invoke(deserialize_tag tag, ondemand::value &val,
+                                Handle<Image> &payload);
 }  // namespace simdjson
 }

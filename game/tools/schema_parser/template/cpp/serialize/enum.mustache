@@ -47,7 +47,7 @@ auto tag_invoke(deserialize_tag, ondemand::value& val,{{type}}& payload){
 void tag_invoke(serialize_tag, builder::string_builder& builder,const Flags<{{type}}>& payload){
     builder.start_array();
 {{#is_zero}}
-    if(payload.Value()==0){
+    if(payload.Value() == 0){
         builder.append("{{zero_name}}");
     }
 {{/is_zero}}

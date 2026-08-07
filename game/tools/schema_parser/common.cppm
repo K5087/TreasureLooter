@@ -19,7 +19,7 @@ struct ClassInfo {
 struct EnumInfo {
     struct Item {
         std::string name;
-        std::optional<int> value;
+        std::optional<std::string> value;
     };
 
     std::string name;

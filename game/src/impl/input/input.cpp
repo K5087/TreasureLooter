@@ -1,7 +1,6 @@
 module input;
 
 import asset;
-import serialize;
 import context;
 import inputconfig.serialize;
 
@@ -77,7 +76,13 @@ float Axis::Value() const {
 
 InputManager::InputManager(Keyboard* keyboard, GamepadManager* gamepad_manager,
                            const Path& config_path) {
-    InputConfig config = LoadAsset<InputConfig>(config_path);
+    InputConfig config = LoadAsset<InputConfig>(config_path).m_payload;
+    SetConfig(keyboard, gamepad_manager, config);
+}
+
+void InputManager::SetConfig(Keyboard* keyboard,
+                             GamepadManager* gamepad_manager,
+                             const InputConfig& config) {
     for (auto& axis : config.m_axis) {
         loadAxisConfig(keyboard, gamepad_manager, axis);
     }
@@ -117,6 +122,8 @@ void InputManager::loadAxisConfig(Keyboard* keyboard,
     if (config.m_mouse_vertical) {
         axis.AddMouseHorizontalMapping(config.m_mouse_vertical.value());
     }
+
+    // FIXME: will not register when gamepad not found
     if (!gamepad_manager->GetGamepads().empty()) {
         for (auto& input : config.m_gamepad_axis) {
             auto& gamepad = gamepad_manager->GetGamepads().begin()->second;
@@ -134,15 +141,14 @@ void InputManager::loadActionConfig(Keyboard* keyboard,
                                     GamepadManager* gamepad_manager,
                                     const InputActionConfig& config) {
     Action action;
-
-    for (auto& input : config.m_keyboard) {
-        auto& button = keyboard->Get(input);
-        action.AddButton(button);
+    for (auto& key : config.m_keyboard) {
+        action.AddButton(keyboard->Get(key));
     }
 
+    // FIXME: will not register when gamepad not found
     if (!gamepad_manager->GetGamepads().empty()) {
+        auto& gamepad = gamepad_manager->GetGamepads().begin()->second;
         for (auto& button : config.m_gamepad) {
-            auto& gamepad = gamepad_manager->GetGamepads().begin()->second;
             action.AddButton(gamepad.GetButton(button));
         }
     }

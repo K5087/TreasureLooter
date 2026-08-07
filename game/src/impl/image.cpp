@@ -10,7 +10,7 @@ import log;
 import math;
 import renderer;
 import storage;
-import context;
+import uuid;
 
 Image::Image(SDL_Renderer &renderer, const Path &filename)
     : m_filename(filename) {
@@ -68,37 +68,11 @@ const Path &Image::Filename() const {
 
 ImageManager::ImageManager(SDL_Renderer &renderer) : m_renderer(renderer) {}
 
-Image *ImageManager::Load(const Path &filename) {
-    if (auto it = m_images.find(filename); it != m_images.end()) {
+ImageHandle ImageManager::Load(const Path &filename) {
+    if (auto it = Find(filename); it) {
         LOGW("image {} already loaded", filename);
-        return it->second.get();
+        return it;
     }
-    auto result = m_images.emplace(
-        filename, std::make_unique<Image>(m_renderer, filename));
-    if (!result.second) {
-        LOGE("emplace image failed");
-        return nullptr;
-    }
-    return result.first->second.get();
-}
-
-Image *ImageManager::Find(const Path &filename) {
-    if (auto it = m_images.find(filename); it != m_images.end()) {
-        return it->second.get();
-    }
-    return nullptr;
-}
-
-bool ImageManager::IsExists(const Path &filename) {
-    return Find(filename);
-}
-
-Image *LoadImage(const Path &filename) {
-    auto &image_manager = Context::GetInst().m_image_manager;
-    Image *image = image_manager->Find(filename);
-
-    if (!image && !filename.empty()) {
-        image = image_manager->Load(filename);
-    }
-    return image;
+    return store(&filename, UUID::CreateV4(),
+                 std::make_unique<Image>(m_renderer, filename));
 }

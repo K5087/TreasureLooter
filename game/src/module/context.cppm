@@ -2,6 +2,9 @@ module;
 #include <SDL3/SDL.h>
 export module context;
 
+import path;
+import prefab;
+import editor;
 import window;
 import renderer;
 import image;
@@ -12,6 +15,7 @@ import mouse;
 import finger_touch;
 import gamepad;
 import input;
+import asset.manager;
 
 import sprite.manager;
 import transform.manager;
@@ -41,6 +45,9 @@ public:
     std::unique_ptr<Renderer> m_renderer;
     std::unique_ptr<ImageManager> m_image_manager;
     std::unique_ptr<Inspector> m_inspector;
+#ifdef TL_ENABLE_EDITOR
+    std::unique_ptr<Editor> m_editor;
+#endif
     std::unique_ptr<RelationshipManager> m_relation_manager;
     std::unique_ptr<TransformManager> m_transform_manager;
     std::unique_ptr<SpriteManager> m_sprite_manager;
@@ -49,8 +56,16 @@ public:
     std::unique_ptr<Touch> m_touch;
     std::unique_ptr<GamepadManager> m_gamepad_manager;
     std::unique_ptr<InputManager> m_input_manager;
+    std::unique_ptr<GenericAssetsManager> m_generic_assets_manager;
 
     Entity GetRootEntity();
+
+#ifdef TL_ENABLE_EDITOR
+    const Path &GetProjectPath() const;
+#endif
+
+    void RegisterEntity(const EntityInstance &);
+    void RemoveEntity(Entity);
 
 private:
     static std::unique_ptr<Context> instance;
@@ -64,6 +79,5 @@ private:
     void gameLogicUpdate();
     void logicPostUpdate();
     void renderUpdate();
-
     Entity createEntity();
 };

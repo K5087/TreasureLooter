@@ -4,9 +4,12 @@ module;
 #include <SDL3/SDL.h>
 export module image;
 
+export import handle;
+
 import log;
 import path;
 import math;
+import asset.manager;
 
 import std;
 export {
@@ -30,19 +33,15 @@ private:
     Path m_filename;
 };
 
-class ImageManager {
+using ImageHandle = Handle<Image>;
+
+class ImageManager : public AssetManagerBase<Image> {
 public:
     explicit ImageManager(SDL_Renderer &renderer);
 
-    Image *Load(const Path &filename);
-    Image *Find(const Path &filename);
-    bool IsExists(const Path &filename);
+    ImageHandle Load(const Path &filename);
 
 private:
-    std::unordered_map<Path, std::unique_ptr<Image>> m_images;
-
     SDL_Renderer &m_renderer;
 };
-
-Image *LoadImage(const Path &filename);
 }

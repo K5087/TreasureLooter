@@ -1,0 +1,23 @@
+{
+	"uuid": "f9b3232c-0000-0000-0000-000000000000",
+	"payload": {
+		"entity": 1,
+		"data": {
+			"sprite": {
+				"image": "assets/Characters/Statue/SpriteSheet.png",
+				"region": {
+					"topleft": { "x": 0.0, "y": 0.0 },
+					"size": { "x": 16.0, "y": 16.0 }
+				},
+				"size": { "x": 16.0, "y": 16.0 },
+				"flip": ["None"]
+			},
+			"transform": {
+				"position": { "x": 0.0, "y": 0.0 },
+				"rotation": 0.0,
+				"scale": { "x": 10.0, "y": 10.0 }
+			},
+			"relation": { "children": [] }
+		}
+	}
+}

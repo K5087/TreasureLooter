@@ -4,7 +4,7 @@ logs
 compile_commands.json
 imgui.ini
 install
-generate
+schema
 
 .gradle
 .cxx
@@ -15,3 +15,4 @@ android/app/build
 local.properties
 android/app/src/main/assets/assets/
 emcmake-build
+project.cpp

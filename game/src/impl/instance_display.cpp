@@ -1,4 +1,6 @@
 module;
+#include <log.hpp>
+
 #include <imgui.h>
 module instance_display;
 
@@ -6,6 +8,9 @@ import std;
 import math;
 import image;
 import flip;
+import dialog;
+import context;
+import log;
 
 void InstanceDisplay(const char* name, int& value) {
     ImGui::PushID(ImGuiIDGenerator::Gen());
@@ -294,6 +299,59 @@ void InstanceDisplay(const char* name, const Radians& value) {
     ImGui::PopID();
 }
 
+void InstanceDisplay(const char* name, Handle<Image>& value) {
+    std::string button_text = "no image";
+
+    if (value) {
+        button_text = value->Filename().string();
+    }
+
+#ifdef TL_ENABLE_EDITOR
+    ImGui::PushID(ImGuiIDGenerator::Gen());
+    if (ImGui::Button(button_text.c_str())) {
+        FileDialog dialog{FileDialog::Type::OpenFile};
+        auto base_path = Context::GetInst().GetProjectPath();
+        dialog.SetTitle("Select Image");
+        dialog.AddFilter("Png", "png");
+        dialog.AddFilter("Bitmap", "bmp");
+        dialog.AddFilter("JPEG", "jpg");
+        dialog.SetDefaultFolder(base_path);
+        dialog.Open();
+
+        auto& files = dialog.GetSelectedFiles();
+        if (!files.empty()) {
+            auto& filename = files[0];
+
+            std::error_code err;
+            auto relative_path =
+                std::filesystem::relative(filename, base_path, err);
+            std::string relative_path_str = relative_path.string();
+            std::replace_if(
+                relative_path_str.begin(), relative_path_str.end(),
+                [](char c) { return c == '\\'; }, '/');
+            relative_path = relative_path_str;
+
+            if (err) {
+                LOGE("Can only select file under {} dir", base_path);
+            } else {
+                value = Context::GetInst().m_image_manager->Load(relative_path);
+            }
+        }
+    }
+
+    if (value) {
+        ImVec2 size;
+        size.x = value->GetSize().x;
+        size.y = value->GetSize().y;
+        ImGui::Image(value->GetTexture(), size);
+    }
+
+    ImGui::PopID();
+#else
+    InstanceDisplay(name, value.Get());
+#endif
+}
+
 void InstanceDisplay(const char* name, Image* value) {
     ImGui::PushID(ImGuiIDGenerator::Gen());
 
@@ -303,12 +361,20 @@ void InstanceDisplay(const char* name, Image* value) {
         auto filename = value->Filename().string();
         ImGui::InputText(name, (char*)filename.c_str(), filename.length());
     } else {
-        ImGui::InputText(name, nullptr, 0);
+        char trivial_buf[1] = {0};
+        ImGui::InputText(name, trivial_buf, 0);
     }
 
     ImGui::EndDisabled();
 
     ImGui::PopID();
+
+    if (value) {
+        ImVec2 size;
+        size.x = value->GetSize().x;
+        size.y = value->GetSize().y;
+        ImGui::Image(value->GetTexture(), size);
+    }
 }
 
 void InstanceDisplay(const char* name, const Image* value) {
@@ -324,6 +390,12 @@ void InstanceDisplay(const char* name, const Image* value) {
     ImGui::EndDisabled();
 
     ImGui::PopID();
+    if (value) {
+        ImVec2 size;
+        size.x = value->GetSize().x;
+        size.y = value->GetSize().y;
+        ImGui::Image(value->GetTexture(), size);
+    }
 }
 
 void InstanceDisplay(const char* name, Transform& value) {

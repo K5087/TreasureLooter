@@ -3,6 +3,7 @@ module;
 export module simdjson;
 
 export namespace simdjson {
+using ::simdjson::custom_deserializable;
 using ::simdjson::deserialize_tag;
 using ::simdjson::error_code;
 using ::simdjson::serialize_tag;

@@ -6,10 +6,11 @@ import flag;
 import image;
 import math;
 import renderer;
-export import flip;
+import flip;
+import handle;
 
 export struct Sprite {
-    Image* m_image{};
+    Handle<Image> m_image{};
     Region m_region;
     Vec2 m_size;
     Flags<Flip> m_flip = Flip::None;
