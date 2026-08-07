@@ -10,7 +10,7 @@ import window;
 import context;
 import imgui_id_generator;
 
-import instance_display;
+import display;
 import flip.display;
 import prefab.display;
 import relationship.display;

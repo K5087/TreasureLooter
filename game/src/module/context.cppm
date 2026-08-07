@@ -15,6 +15,7 @@ import mouse;
 import finger_touch;
 import gamepad;
 import input;
+import tilemap;
 import asset.manager;
 
 import sprite.manager;
@@ -50,6 +51,9 @@ public:
 #endif
     std::unique_ptr<RelationshipManager> m_relation_manager;
     std::unique_ptr<TransformManager> m_transform_manager;
+
+    std::unique_ptr<TilemapManager> m_tilemap_manager;
+    std::unique_ptr<TilemapComponentManager> m_tilemap_component_manager;
     std::unique_ptr<SpriteManager> m_sprite_manager;
     std::unique_ptr<Keyboard> m_keyboard;
     std::unique_ptr<Mouse> m_mouse;

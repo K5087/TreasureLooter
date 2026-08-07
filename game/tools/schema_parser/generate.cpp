@@ -9,7 +9,8 @@ bool is_import(const std::string& name, std::filesystem::path dir) {
 };
 
 bool has_serialize(const std::string& name, std::filesystem::path dir) {
-    return std::filesystem::exists(dir / (name + ".cppm")) or name == "image";
+    return std::filesystem::exists(dir / (name + ".cppm")) or name == "image" or
+           name == "tilemap";
 };
 
 std::string normal_name(const std::string& name) {
@@ -222,7 +223,7 @@ std::string generate(const SchemaInfo& schema_info) {
     schema_data.set("name", schema_info.filename.stem().string());
     schema_data.set("has_enum", schema_info.enums.size() > 0);
     schema_data.set("imports", import_datas);
-    // math display impl in instance_display
+    // math display impl in display
     if (schema_info.filename.stem().string() != "math") {
         schema_data.set("displays", display_datas);
     }

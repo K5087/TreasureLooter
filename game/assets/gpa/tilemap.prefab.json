@@ -1,0 +1,16 @@
+{
+	"uuid": "8633cf5a-0000-0000-0000-000000000000",
+	"payload": {
+		"entity": 1,
+		"data": {
+			"sprite": null,
+			"transform": {
+				"position": { "x": 0.0, "y": 0.0 },
+				"rotation": 0.0,
+				"scale": { "x": 4.0, "y": 4.0 }
+			},
+			"relation": null,
+			"tilemap": "assets/tilemap/test.tmx"
+		}
+	}
+}

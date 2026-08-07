@@ -52,6 +52,7 @@ protected:
         if (filename) {
             auto r = m_paths.emplace(*filename, uuid);
             if (!r.second) {
+                m_payloads.erase(uuid);
                 LOGE("emplace filename failed: {}", *filename);
                 return nullptr;
             }
@@ -91,6 +92,7 @@ public:
     }
 
 private:
-    std::unordered_map<std::uint32_t, std::unique_ptr<IAssetManager>> m_managers;
+    std::unordered_map<std::uint32_t, std::unique_ptr<IAssetManager>>
+        m_managers;
 };
 }

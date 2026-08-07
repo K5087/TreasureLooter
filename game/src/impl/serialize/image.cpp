@@ -11,8 +11,8 @@ import std;
 namespace simdjson {
 void tag_invoke(serialize_tag, builder::string_builder &builder,
                 const Image *payload) {
-    std::string path = payload->Filename().string();
-    builder.append(simdjson::pad(path));
+    std::string path = payload ? payload->Filename().string() : "";
+    builder.append(path);
 }
 
 simdjson::error_code tag_invoke(deserialize_tag, ondemand::document &val,

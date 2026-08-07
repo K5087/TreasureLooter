@@ -5,6 +5,8 @@ compile_commands.json
 imgui.ini
 install
 schema
+*.tiled-project
+*.tiled-session
 
 .gradle
 .cxx

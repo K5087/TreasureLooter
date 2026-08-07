@@ -46,6 +46,8 @@ Context::~Context() {
     m_touch.reset();
     m_mouse.reset();
     m_keyboard.reset();
+    m_tilemap_component_manager.reset();
+    m_tilemap_manager.reset();
     m_sprite_manager.reset();
     m_transform_manager.reset();
     m_inspector.reset();
@@ -60,14 +62,25 @@ void Context::Update() {
     ///////// this is a test /////////////
     static bool executed = false;
     if (!executed) {
-        auto result =
-            LoadAsset<EntityInstance>(Path("assets/gpa/waggo.prefab.json"));
-        result.m_payload.m_entity = createEntity();
-        RegisterEntity(result.m_payload);
+        {
+            auto result =
+                LoadAsset<EntityInstance>(Path("assets/gpa/waggo.prefab.json"));
+            result.m_payload.m_entity = createEntity();
+            RegisterEntity(result.m_payload);
 
+            auto root_relationship = m_relation_manager->Get(GetRootEntity());
+            root_relationship->m_children.push_back(result.m_payload.m_entity);
+        }
+        {
+            auto result = LoadAsset<EntityInstance>(
+                Path("assets/gpa/tilemap.prefab.json"));
+            result.m_payload.m_entity = createEntity();
+            RegisterEntity(result.m_payload);
+
+            auto root_relationship = m_relation_manager->Get(GetRootEntity());
+            root_relationship->m_children.push_back(result.m_payload.m_entity);
+        }
         executed = true;
-        auto root_relationship = m_relation_manager->Get(GetRootEntity());
-        root_relationship->m_children.push_back(result.m_payload.m_entity);
     }
     /////////////////////////////////////
 
@@ -113,6 +126,8 @@ Context::Context() {
     m_image_manager =
         std::make_unique<ImageManager>(*m_renderer->GetRenderer());
 
+    m_tilemap_manager = std::make_unique<TilemapManager>();
+    m_tilemap_component_manager = std::make_unique<TilemapComponentManager>();
     m_inspector = std::make_unique<Inspector>(*m_window, *m_renderer);
 
 #ifdef TL_ENABLE_EDITOR
@@ -198,6 +213,7 @@ void Context::renderUpdate() {
     }
     ImGui::End();
 
+    m_tilemap_component_manager->Update();
     m_sprite_manager->Update();
 
     m_inspector->Update();
@@ -228,6 +244,10 @@ void Context::RegisterEntity(const EntityInstance& entity_instance) {
         m_relation_manager->ReplaceComponent(
             entity_instance.m_entity,
             entity_instance.m_data.m_relation.value());
+    }
+    if (entity_instance.m_data.m_tilemap) {
+        m_tilemap_component_manager->ReplaceComponent(
+            entity_instance.m_entity, entity_instance.m_data.m_tilemap);
     }
 }
 

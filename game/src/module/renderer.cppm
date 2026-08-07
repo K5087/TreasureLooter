@@ -25,6 +25,8 @@ public:
     void FillRect(const Rect& r, const Color& color);
     void DrawImage(const Image& image, const Region& src, const Region& dst,
                    Degrees rotation, const Vec2& center, Flags<Flip>);
+    void DrawTiled(const Image& image, const Region& src, const Region& dst,
+                   float scale);
 
     void Clear();
     void Present();

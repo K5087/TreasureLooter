@@ -22,3 +22,6 @@ add_vendor(tree-sitter)
 add_vendor(tree-sitter-cpp)
 add_vendor(simdjson)
 add_vendor(stduuid)
+
+set(TMXLITE_STATIC_LIB ON)
+add_vendor(tmxlite/tmxlite)

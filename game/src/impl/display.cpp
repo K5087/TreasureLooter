@@ -2,7 +2,7 @@ module;
 #include <log.hpp>
 
 #include <imgui.h>
-module instance_display;
+module display;
 
 import std;
 import math;
@@ -396,6 +396,63 @@ void InstanceDisplay(const char* name, const Image* value) {
         size.y = value->GetSize().y;
         ImGui::Image(value->GetTexture(), size);
     }
+}
+
+void InstanceDisplay(const char* name, TilemapHandle& value) {
+    std::string button_text = "no tilemap";
+    if (value) {
+        button_text = value->GetFilename().string();
+    }
+#ifdef TL_ENABLE_EDITOR
+    ImGui::PushID(ImGuiIDGenerator::Gen());
+    if (ImGui::Button(button_text.c_str())) {
+        FileDialog dialog{FileDialog::Type::OpenFile};
+        auto base_path = Context::GetInst().GetProjectPath();
+        dialog.SetTitle("Select Image");
+        dialog.AddFilter("TileMap", "tmx");
+        dialog.SetDefaultFolder(base_path);
+        dialog.Open();
+        auto& files = dialog.GetSelectedFiles();
+        if (!files.empty()) {
+            auto& filename = files[0];
+            std::error_code err;
+            auto relative_path =
+                std::filesystem::relative(filename, base_path, err);
+            if (err) {
+                LOGE("Can only select file under {} dir", base_path);
+            } else {
+                relative_path = relative_path.generic_string();
+                value =
+                    Context::GetInst().m_tilemap_manager->Load(relative_path);
+            }
+        }
+    }
+    ImGui::PopID();
+#else
+    InstanceDisplay(value.Get());
+#endif  // TL_ENABLE_EDITOR
+}
+
+void InstanceDisplay(const char* name, const TilemapHandle& value) {
+    InstanceDisplay(name, value.Get());
+}
+
+void InstanceDisplay(const char* name, Tilemap* value) {
+    InstanceDisplay(name, static_cast<const Tilemap*>(value));
+}
+
+void InstanceDisplay(const char* name, const Tilemap* value) {
+    ImGui::PushID(ImGuiIDGenerator::Gen());
+    ImGui::BeginDisabled(true);
+    if (value) {
+        auto filename = value->GetFilename().string();
+        ImGui::InputText(name, (char*)filename.c_str(), filename.length());
+
+    } else {
+        ImGui::InputText(name, nullptr, 0);
+    }
+    ImGui::EndDisabled();
+    ImGui::PopID();
 }
 
 void InstanceDisplay(const char* name, Transform& value) {

@@ -1,6 +1,6 @@
 module;
 #include <imgui.h>
-export module instance_display;
+export module display;
 import imgui_id_generator;
 
 import std;
@@ -8,6 +8,7 @@ import math;
 import image;
 import flip;
 import handle;
+import tilemap;
 
 export {
 void InstanceDisplay(const char* name, int& value);
@@ -50,6 +51,11 @@ void InstanceDisplay(const char* name, Image* value);
 void InstanceDisplay(const char* name, const Image* value);
 void InstanceDisplay(const char* name, Transform& value);
 void InstanceDisplay(const char* name, const Transform& value);
+
+void InstanceDisplay(const char* name, TilemapHandle& value);
+void InstanceDisplay(const char* name, const TilemapHandle& value);
+void InstanceDisplay(const char* name, Tilemap* value);
+void InstanceDisplay(const char* name, const Tilemap* value);
 
 //
 template <typename T>
