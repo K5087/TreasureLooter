@@ -1,5 +1,4 @@
 module;
-#include <log.hpp>
 #include <sdl_call.hpp>
 
 #include <SDL3/SDL.h>
@@ -37,6 +36,7 @@ Context& Context::GetInst() {
 }
 
 Context::~Context() {
+    m_time.reset();
     m_input_manager.reset();
     m_generic_assets_manager.reset();
     m_gamepad_manager.reset();
@@ -63,6 +63,14 @@ void Context::Update() {
     static bool executed = false;
     if (!executed) {
         {
+            if (!m_track) {
+                m_track = std::make_unique<AnimationTrack<float>>(
+                    AnimationTrackType::Linear);
+                m_track->AddKeyFrame({100, 0});
+                m_track->AddKeyFrame({400, 3});
+                m_track->AddKeyFrame({100, 10});
+                // TODO:
+            }
             auto result =
                 LoadAsset<EntityInstance>(Path("assets/gpa/waggo.prefab.json"));
             result.m_payload.m_entity = createEntity();
@@ -82,12 +90,19 @@ void Context::Update() {
         }
         executed = true;
     }
+    m_track->Update(m_time->GetElapsedTime());
+    auto children = m_relation_manager->Get(m_root_entity);
+    Entity entity = children->m_children[0];
+    auto transform = m_transform_manager->Get(entity);
+    transform->m_position.x = m_track->GetValue();
+    LOGI("current x = {}", transform->m_position.x);
     /////////////////////////////////////
 
     logicUpdate();
     gameLogicUpdate();
     renderUpdate();
     logicPostUpdate();
+    m_time->Update();
 }
 
 void Context::HandleEvents(const SDL_Event& event) {
@@ -148,6 +163,7 @@ Context::Context() {
     m_input_manager = std::make_unique<InputManager>(
         m_keyboard.get(), m_gamepad_manager.get(),
         "assets/gpa/input.config.json");
+    m_time = std::make_unique<Time>();
 }
 
 void Context::logicUpdate() {

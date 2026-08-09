@@ -163,6 +163,11 @@ if(CMAKE_VERSION VERSION_GREATER_EQUAL "3.16")
     endif()
 
     target_precompile_headers(simdjson PRIVATE ${SIMDJSON_PRECOMPILE_HEADERS})
+    set_source_files_properties(
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/simdjson.cppm
+    PROPERTIES
+        SKIP_PRECOMPILE_HEADERS ON
+)
 endif()
 
 if(SIMDJSON_BUILD_STATIC_LIB)
@@ -239,7 +244,7 @@ if(SIMDJSON_STATIC_REFLECTION)
   )
     endif()
 else()
-    simdjson_add_props(target_compile_features PUBLIC cxx_std_20)
+    simdjson_add_props(target_compile_features PUBLIC cxx_std_23)
 endif()
 
 # workaround for GNU GCC poor AVX load/store code generation
@@ -286,8 +291,8 @@ if(
 endif()
 
 if(SIMDJSON_ENABLE_THREADS)
-    find_package(Threads REQUIRED)
-    simdjson_add_props(target_link_libraries PUBLIC Threads::Threads)
+    # find_package(Threads REQUIRED)
+    # simdjson_add_props(target_link_libraries PUBLIC Threads::Threads)
     simdjson_add_props(target_compile_definitions PUBLIC SIMDJSON_THREADS_ENABLED=1)
 endif()
 

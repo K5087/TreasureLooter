@@ -16,6 +16,8 @@ import finger_touch;
 import gamepad;
 import input;
 import tilemap;
+import animation;
+import time;
 import asset.manager;
 
 import sprite.manager;
@@ -61,6 +63,7 @@ public:
     std::unique_ptr<GamepadManager> m_gamepad_manager;
     std::unique_ptr<InputManager> m_input_manager;
     std::unique_ptr<GenericAssetsManager> m_generic_assets_manager;
+    std::unique_ptr<Time> m_time;
 
     Entity GetRootEntity();
 
@@ -84,4 +87,7 @@ private:
     void logicPostUpdate();
     void renderUpdate();
     Entity createEntity();
+
+    // FOR TEST
+    std::unique_ptr<AnimationTrack<float>> m_track;
 };
