@@ -1,4 +1,0 @@
-CompileFlags:
-  Remove:
-    - -fmodule-file=*
-    - -fprebuilt-module-path=*

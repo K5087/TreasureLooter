@@ -90,4 +90,5 @@ private:
 
     // FOR TEST
     std::unique_ptr<AnimationTrack<float>> m_track;
+    std::unique_ptr<Animation> m_anim;
 };

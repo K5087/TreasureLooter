@@ -2,7 +2,7 @@ export module time;
 
 import std;
 export {
-using TimeType = std::chrono::duration<double>;
+using TimeType = double;
 
 class Time {
 public:
@@ -13,7 +13,8 @@ public:
     TimeType GetElapsedTime();
 
 private:
-    TimeType m_elapsed_time;
+    static constexpr TimeType MinElapseTime = 0.000001;
+    TimeType m_elapsed_time{MinElapseTime};
     std::chrono::steady_clock::time_point m_cur_time{};
 };
 }

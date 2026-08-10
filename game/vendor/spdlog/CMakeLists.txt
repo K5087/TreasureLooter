@@ -30,9 +30,9 @@ endif()
 # Compiler config
 # ---------------------------------------------------------------------------------------
 if(SPDLOG_USE_STD_FORMAT)
-if(NOT DEFINED CMAKE_CXX_STANDARD)
-    set(CMAKE_CXX_STANDARD 20)
-endif()
+    if(NOT DEFINED CMAKE_CXX_STANDARD)
+        set(CMAKE_CXX_STANDARD 20)
+    endif()
     set(CMAKE_CXX_STANDARD_REQUIRED ON)
 elseif(NOT CMAKE_CXX_STANDARD)
     set(CMAKE_CXX_STANDARD 11)
@@ -196,8 +196,7 @@ endif()
 target_compile_definitions(spdlog PUBLIC SPDLOG_COMPILED_LIB)
 target_include_directories(spdlog ${SPDLOG_INCLUDES_LEVEL} PUBLIC "$<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/include>"
                                                                   "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>")
-# target_link_libraries(spdlog PUBLIC Threads::Threads)
-target_link_libraries(spdlog PUBLIC)
+target_link_libraries(spdlog PUBLIC Threads::Threads)
 spdlog_enable_warnings(spdlog)
 
 set_target_properties(spdlog PROPERTIES VERSION ${SPDLOG_VERSION} SOVERSION

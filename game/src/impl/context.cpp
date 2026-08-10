@@ -63,13 +63,20 @@ void Context::Update() {
     static bool executed = false;
     if (!executed) {
         {
-            if (!m_track) {
-                m_track = std::make_unique<AnimationTrack<float>>(
+            if (!m_anim) {
+                auto track1 = std::make_unique<AnimationTrack<float>>(
                     AnimationTrackType::Linear);
-                m_track->AddKeyFrame({100, 0});
-                m_track->AddKeyFrame({400, 3});
-                m_track->AddKeyFrame({100, 10});
-                // TODO:
+                track1->AddKeyFrame({100, 0});
+                track1->AddKeyFrame({800, 3});
+                track1->AddKeyFrame({2000, 10});
+                auto track2 = std::make_unique<AnimationTrack<float>>(
+                    AnimationTrackType::Linear);
+                track2->AddKeyFrame({100, 0});
+                track2->AddKeyFrame({800, 3});
+
+                m_anim = std::make_unique<Animation>();
+                m_anim->AddTrack(std::move(track1));
+                m_anim->AddTrack(std::move(track2));
             }
             auto result =
                 LoadAsset<EntityInstance>(Path("assets/gpa/waggo.prefab.json"));
@@ -90,12 +97,17 @@ void Context::Update() {
         }
         executed = true;
     }
-    m_track->Update(m_time->GetElapsedTime());
+    m_anim->Play();
+    m_anim->Update(m_time->GetElapsedTime());
+    auto& tracks = m_anim->GetTracks();
     auto children = m_relation_manager->Get(m_root_entity);
     Entity entity = children->m_children[0];
     auto transform = m_transform_manager->Get(entity);
-    transform->m_position.x = m_track->GetValue();
-    LOGI("current x = {}", transform->m_position.x);
+    transform->m_position.x =
+        static_cast<AnimationTrack<float>*>(tracks[0].get())->GetValue();
+    transform->m_position.y =
+        static_cast<AnimationTrack<float>*>(tracks[1].get())->GetValue();
+    LOGI("x:{},y:{}", transform->m_position.x, transform->m_position.y);
     /////////////////////////////////////
 
     logicUpdate();

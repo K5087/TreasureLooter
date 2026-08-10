@@ -244,7 +244,7 @@ if(SIMDJSON_STATIC_REFLECTION)
   )
     endif()
 else()
-    simdjson_add_props(target_compile_features PUBLIC cxx_std_23)
+    simdjson_add_props(target_compile_features PUBLIC cxx_std_20)
 endif()
 
 # workaround for GNU GCC poor AVX load/store code generation
@@ -291,8 +291,8 @@ if(
 endif()
 
 if(SIMDJSON_ENABLE_THREADS)
-    # find_package(Threads REQUIRED)
-    # simdjson_add_props(target_link_libraries PUBLIC Threads::Threads)
+    find_package(Threads REQUIRED)
+    simdjson_add_props(target_link_libraries PUBLIC Threads::Threads)
     simdjson_add_props(target_compile_definitions PUBLIC SIMDJSON_THREADS_ENABLED=1)
 endif()
 

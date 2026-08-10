@@ -9,7 +9,11 @@ void Time::Update() {
     auto elapsed_time = cur_time - m_cur_time;
     m_cur_time = cur_time;
     m_elapsed_time =
-        std::chrono::duration_cast<std::chrono::milliseconds>(elapsed_time);
+        std::chrono::duration_cast<
+            std::chrono::duration<TimeType, std::ratio<1>>>(elapsed_time)
+            .count();
+
+    m_elapsed_time = std::max(m_elapsed_time, MinElapseTime);
 }
 
 TimeType Time::GetElapsedTime() {
