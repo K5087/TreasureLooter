@@ -51,6 +51,7 @@ Context::~Context() {
     m_sprite_manager.reset();
     m_transform_manager.reset();
     m_inspector.reset();
+    m_anim_manager.reset();
     m_image_manager.reset();
     m_renderer.reset();
     m_window.reset();
@@ -63,21 +64,6 @@ void Context::Update() {
     static bool executed = false;
     if (!executed) {
         {
-            if (!m_anim) {
-                auto track1 = std::make_unique<AnimationTrack<float>>(
-                    AnimationTrackType::Linear);
-                track1->AddKeyFrame({100, 0});
-                track1->AddKeyFrame({800, 3});
-                track1->AddKeyFrame({2000, 10});
-                auto track2 = std::make_unique<AnimationTrack<float>>(
-                    AnimationTrackType::Linear);
-                track2->AddKeyFrame({100, 0});
-                track2->AddKeyFrame({800, 3});
-
-                m_anim = std::make_unique<Animation>();
-                m_anim->AddTrack(std::move(track1));
-                m_anim->AddTrack(std::move(track2));
-            }
             auto result =
                 LoadAsset<EntityInstance>(Path("assets/gpa/waggo.prefab.json"));
             result.m_payload.m_entity = createEntity();
@@ -96,18 +82,30 @@ void Context::Update() {
             root_relationship->m_children.push_back(result.m_payload.m_entity);
         }
         executed = true;
+
+        auto children = m_relation_manager->Get(m_root_entity);
+        Entity entity = children->m_children[0];
+
+        auto track1 = std::make_unique<
+            AnimationTrack<float, AnimationTrackType::Linear>>();
+        track1->AddKeyFrame({100, 0});
+        track1->AddKeyFrame({800, 3});
+        track1->AddKeyFrame({2000, 10});
+        auto track2 = std::make_unique<
+            AnimationTrack<float, AnimationTrackType::Linear>>();
+        track2->AddKeyFrame({100, 0});
+        track2->AddKeyFrame({800, 3});
+
+        Animation anim;
+        anim.AddTrack(AnimationBindingPoint::TransformPositionX,
+                      std::move(track1));
+        anim.AddTrack(AnimationBindingPoint::TransformPositionY,
+                      std::move(track2));
+
+        anim.Play();
+        anim.SetLoop(Animation::InfLoop);
+        m_anim_manager->RegisterEntity(entity, std::move(anim));
     }
-    m_anim->Play();
-    m_anim->Update(m_time->GetElapsedTime());
-    auto& tracks = m_anim->GetTracks();
-    auto children = m_relation_manager->Get(m_root_entity);
-    Entity entity = children->m_children[0];
-    auto transform = m_transform_manager->Get(entity);
-    transform->m_position.x =
-        static_cast<AnimationTrack<float>*>(tracks[0].get())->GetValue();
-    transform->m_position.y =
-        static_cast<AnimationTrack<float>*>(tracks[1].get())->GetValue();
-    LOGI("x:{},y:{}", transform->m_position.x, transform->m_position.y);
     /////////////////////////////////////
 
     logicUpdate();
@@ -152,6 +150,7 @@ Context::Context() {
 
     m_image_manager =
         std::make_unique<ImageManager>(*m_renderer->GetRenderer());
+    m_anim_manager = std::make_unique<AnimationManager>();
 
     m_tilemap_manager = std::make_unique<TilemapManager>();
     m_tilemap_component_manager = std::make_unique<TilemapComponentManager>();
@@ -183,6 +182,8 @@ void Context::logicUpdate() {
     m_touch->Update();
     m_mouse->Update();
     m_keyboard->Update();
+
+    m_anim_manager->Update(m_time->GetElapsedTime());
     m_relation_manager->Update();
 }
 
@@ -216,30 +217,30 @@ void Context::renderUpdate() {
     m_inspector->BeginFrame();
     m_renderer->Clear();
 
-    auto& fingers = m_touch->GetFingers();
-    if (ImGui::Begin("finger test")) {
-        for (int i = 0; i < fingers.size(); i++) {
-            auto& finger = fingers[i];
-            std::string status;
-            if (finger.IsPressing()) {
-                status = "Pressing";
-            } else if (finger.IsPressed()) {
-                status = "Pressed";
-            } else if (finger.IsReleased()) {
-                status = "Released";
-            } else if (finger.IsReleasing()) {
-                status = "Releasing";
-            } else {
-                status = "Unknown";
-            }
-            ImGui::Text("finger index :%d, status: %s, position: {%f, %f}, "
-                        "offset: {%f, %f}",
-                        i, status.c_str(), finger.Position().x,
-                        finger.Position().y, finger.Offset().x,
-                        finger.Offset().y);
-        }
-    }
-    ImGui::End();
+    // auto& fingers = m_touch->GetFingers();
+    // if (ImGui::Begin("finger test")) {
+    //     for (int i = 0; i < fingers.size(); i++) {
+    //         auto& finger = fingers[i];
+    //         std::string status;
+    //         if (finger.IsPressing()) {
+    //             status = "Pressing";
+    //         } else if (finger.IsPressed()) {
+    //             status = "Pressed";
+    //         } else if (finger.IsReleased()) {
+    //             status = "Released";
+    //         } else if (finger.IsReleasing()) {
+    //             status = "Releasing";
+    //         } else {
+    //             status = "Unknown";
+    //         }
+    //         ImGui::Text("finger index :%d, status: %s, position: {%f, %f}, "
+    //                     "offset: {%f, %f}",
+    //                     i, status.c_str(), finger.Position().x,
+    //                     finger.Position().y, finger.Offset().x,
+    //                     finger.Offset().y);
+    //     }
+    // }
+    // ImGui::End();
 
     m_tilemap_component_manager->Update();
     m_sprite_manager->Update();

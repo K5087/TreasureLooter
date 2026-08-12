@@ -64,6 +64,7 @@ public:
     std::unique_ptr<InputManager> m_input_manager;
     std::unique_ptr<GenericAssetsManager> m_generic_assets_manager;
     std::unique_ptr<Time> m_time;
+    std::unique_ptr<AnimationManager> m_anim_manager;
 
     Entity GetRootEntity();
 
@@ -87,8 +88,4 @@ private:
     void logicPostUpdate();
     void renderUpdate();
     Entity createEntity();
-
-    // FOR TEST
-    std::unique_ptr<AnimationTrack<float>> m_track;
-    std::unique_ptr<Animation> m_anim;
 };
