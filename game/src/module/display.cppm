@@ -9,6 +9,7 @@ import image;
 import flip;
 import handle;
 import tilemap;
+import animation;
 
 export {
 void InstanceDisplay(const char* name, int& value);
@@ -56,8 +57,8 @@ void InstanceDisplay(const char* name, TilemapHandle& value);
 void InstanceDisplay(const char* name, const TilemapHandle& value);
 void InstanceDisplay(const char* name, Tilemap* value);
 void InstanceDisplay(const char* name, const Tilemap* value);
+void InstanceDisplay(const char* name, Animation&);
 
-//
 template <typename T>
 void InstanceDisplay(const char* name, std::optional<T>& value) {
     ImGui::Text("%s", name);
@@ -168,5 +169,41 @@ void InstanceDisplay(const char* name,
         InstanceDisplay("Val", value);
     }
     ImGui::EndDisabled();
+}
+
+template <typename T>
+void InstanceDisplay(const char* name, const KeyFrame<T>& m) {
+    ImGui::BeginDisabled(true);
+    ImGui::Text("%s", name);
+    InstanceDisplay("time", m.m_time);
+    InstanceDisplay("value", m.m_value);
+    ImGui::EndDisabled();
+}
+
+template <typename T>
+void InstanceDisplay(const char* name, KeyFrame<T>& m) {
+    ImGui::Text("%s", name);
+    InstanceDisplay(m.m_time);
+    InstanceDisplay(m.m_value);
+}
+
+template <typename T, AnimationTrackType TrackType>
+void InstanceDisplay(const char* name, const AnimationTrack<T, TrackType>& m) {
+    ImGui::BeginDisabled(true);
+    ImGui::Text("%s", name);
+    InstanceDisplay("type", m.GetType());
+
+    auto& keyframes = m.GetKeyFrames();
+    InstanceDisplay("keyFrames", keyframes);
+    ImGui::EndDisabled();
+}
+
+template <typename T, AnimationTrackType TrackType>
+void InstanceDisplay(const char* name, AnimationTrack<T, TrackType>& m) {
+    ImGui::Text("%s", name);
+    InstanceDisplay("type", m.GetType());
+
+    auto& keyframes = m.GetKeyFrames();
+    InstanceDisplay("keyFrames", keyframes);
 }
 }

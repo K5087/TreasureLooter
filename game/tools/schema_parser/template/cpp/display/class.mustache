@@ -1,7 +1,10 @@
 void InstanceDisplay(const char* name, {{type}}& value){ 
     ImGui::Text("%s", name);
     {{#fields}}
-    InstanceDisplay("{{normal_field}}", value.{{field}});
+    if (ImGui::TreeNode("{{normal_field}}")) {
+        InstanceDisplay("{{normal_field}}", value.{{field}});
+        ImGui::TreePop();
+    }
     {{/fields}}
 }
 
@@ -9,7 +12,10 @@ void InstanceDisplay(const char* name, const {{type}}& value){
     ImGui::BeginDisabled(true);
     ImGui::Text("%s", name);
     {{#fields}}
-    InstanceDisplay("{{normal_field}}", value.{{field}});
+    if (ImGui::TreeNode("{{normal_field}}")) {
+        InstanceDisplay("{{normal_field}}", value.{{field}});
+        ImGui::TreePop();
+    }
     {{/fields}}
     ImGui::EndDisabled();
 }

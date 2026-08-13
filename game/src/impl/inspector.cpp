@@ -70,8 +70,8 @@ void Inspector::EndFrame() {
 
 void Inspector::Update() {
     if (ImGui::Begin("elapsed time")) {
-        ImGui::Text("elapsed time: %lf",
-                    Context::GetInst().m_time->GetElapsedTime());
+        auto duration = Context::GetInst().m_time->GetElapsedTime();
+        ImGui::Text("fps: %d", int(duration > 0 ? 1.0 / duration : 4000));
     }
     ImGui::End();
     if (ImGui::Begin("Entity Hierarchy", &m_hierarchy_window_open)) {

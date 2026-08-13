@@ -4,13 +4,15 @@ module;
 #include <imgui.h>
 module display;
 
-import std;
 import math;
 import image;
 import flip;
 import dialog;
 import context;
+import animation.type.display;
 import log;
+
+import std;
 
 void InstanceDisplay(const char* name, int& value) {
     ImGui::PushID(ImGuiIDGenerator::Gen());
@@ -477,4 +479,87 @@ void InstanceDisplay(const char* name, const Transform& value) {
     ImGui::EndDisabled();
 
     ImGui::PopID();
+}
+
+#define HANDLE_TRACK_DISPLAY(binding) if (binding_point == binding)
+#define HANDLE_LINEAR_TRACK_DISPLAY()                                  \
+    if (track_base.GetType() == AnimationTrackType::Linear) {          \
+        auto& track = static_cast<                                     \
+            AnimationTrack<TARGET_TYPE, AnimationTrackType::Linear>&>( \
+            track_base);                                               \
+        InstanceDisplay("track", track);                               \
+    }
+#define HANDLE_DISCRETE_TRACK_DISPLAY()                                  \
+    if (track_base.GetType() == AnimationTrackType::Discrete) {          \
+        auto& track = static_cast<                                       \
+            AnimationTrack<TARGET_TYPE, AnimationTrackType::Discrete>&>( \
+            track_base);                                                 \
+        InstanceDisplay("track", track);                                 \
+    }
+
+void animTrackDisplay(AnimationBindingPoint binding_point,
+                      AnimationTrackBase& track_base) {
+#define TARGET_TYPE Vec2
+    HANDLE_TRACK_DISPLAY(AnimationBindingPoint::TransformPosition) {
+        HANDLE_LINEAR_TRACK_DISPLAY();
+        HANDLE_DISCRETE_TRACK_DISPLAY();
+    }
+#undef TARGET_TYPE
+
+#define TARGET_TYPE Vec2
+    HANDLE_TRACK_DISPLAY(AnimationBindingPoint::TransformScale) {
+        HANDLE_LINEAR_TRACK_DISPLAY();
+        HANDLE_DISCRETE_TRACK_DISPLAY();
+    }
+#undef TARGET_TYPE
+
+#define TARGET_TYPE float
+    HANDLE_TRACK_DISPLAY(AnimationBindingPoint::TransformRotation) {
+        HANDLE_LINEAR_TRACK_DISPLAY();
+        HANDLE_DISCRETE_TRACK_DISPLAY();
+    }
+#undef TARGET_TYPE
+
+#define TARGET_TYPE float
+    HANDLE_TRACK_DISPLAY(AnimationBindingPoint::SpriteImage) {
+        HANDLE_DISCRETE_TRACK_DISPLAY();
+    }
+#undef TARGET_TYPE
+
+#define TARGET_TYPE float
+    HANDLE_TRACK_DISPLAY(AnimationBindingPoint::SpriteRegion) {
+        HANDLE_DISCRETE_TRACK_DISPLAY();
+    }
+#undef TARGET_TYPE
+
+#define TARGET_TYPE float
+    HANDLE_TRACK_DISPLAY(AnimationBindingPoint::SpriteFlip) {
+        HANDLE_DISCRETE_TRACK_DISPLAY();
+    }
+#undef TARGET_TYPE
+
+#define TARGET_TYPE float
+    HANDLE_TRACK_DISPLAY(AnimationBindingPoint::SpriteSize) {
+        HANDLE_DISCRETE_TRACK_DISPLAY();
+        HANDLE_LINEAR_TRACK_DISPLAY();
+    }
+#undef TARGET_TYPE
+}
+
+#undef HANDLE_TRACK_DISPLAY
+#undef HANDLE_LINEAR_TRACK_DISPLAY
+#undef HANDLE_DISCRETE_TRACK_DISPLAY
+
+void InstanceDisplay(const char* name, Animation& anim) {
+    ImGui::Text("%s", name);
+
+    int loop = anim.GetLoopCount();
+    InstanceDisplay("loop", loop);
+    anim.SetLoop(loop);
+
+    auto& tracks = anim.GetTracks();
+    for (auto& [binding, track] : tracks) {
+        InstanceDisplay("binding point", binding);
+        animTrackDisplay(binding, *track);
+    }
 }

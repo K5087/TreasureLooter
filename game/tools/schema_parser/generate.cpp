@@ -152,7 +152,8 @@ std::string generate(const SchemaInfo& schema_info) {
     auto& schema_mustache = MustacheManager::GetInst().cpp_schema_serialize;
     kainjow::mustache::data schema_data;
     schema_data.set("serializes", serialize_datas);
-    schema_data.set("name", schema_info.filename.stem().string());
+    // schema_data.set("name", schema_info.filename.stem().string());
+    schema_data.set("name", schema_info.name);
     schema_data.set("imports", import_datas);
     schema_data.set("has_enum", schema_info.enums.size() > 0);
     return schema_mustache.render(schema_data);
@@ -170,10 +171,8 @@ std::string generate(const EnumInfo& info) {
         kainjow::mustache::data item_data;
         item_data.set("item", item.name);
         item_data.set("type", info.name);
-        if (item.value) {
-            item_data.set("idx", std::to_string(i));
-            // item_data.set("idx", std::to_string(*item.value));
-        }
+        item_data.set("idx", std::to_string(i));
+        // item_data.set("idx", std::to_string(*item.value));
         item_datas << item_data;
     }
     display_data.set("type", info.name);
@@ -220,7 +219,8 @@ std::string generate(const SchemaInfo& schema_info) {
     auto& schema_mustache = MustacheManager::GetInst().cpp_schema_display;
     kainjow::mustache::data schema_data;
 
-    schema_data.set("name", schema_info.filename.stem().string());
+    // schema_data.set("name", schema_info.filename.stem().string());
+    schema_data.set("name", schema_info.name);
     schema_data.set("has_enum", schema_info.enums.size() > 0);
     schema_data.set("imports", import_datas);
     // math display impl in display

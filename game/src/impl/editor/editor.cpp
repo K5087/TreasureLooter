@@ -134,7 +134,6 @@ void Editor::Update() {
 
             auto& files = file_dialog.GetSelectedFiles();
             if (!files.empty()) {
-                std::cout << "Hello\n";
                 m_filename = files[0];
                 auto file_str = m_filename.string();
                 auto extension = file_str.substr(file_str.find('.'));

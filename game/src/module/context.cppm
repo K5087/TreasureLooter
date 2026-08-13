@@ -47,6 +47,8 @@ public:
     std::unique_ptr<Window> m_window;
     std::unique_ptr<Renderer> m_renderer;
     std::unique_ptr<ImageManager> m_image_manager;
+    std::unique_ptr<AnimationComponentManager> m_animation_component_manager;
+    std::unique_ptr<AnimationManager> m_animation_manager;
     std::unique_ptr<Inspector> m_inspector;
 #ifdef TL_ENABLE_EDITOR
     std::unique_ptr<Editor> m_editor;
@@ -64,7 +66,6 @@ public:
     std::unique_ptr<InputManager> m_input_manager;
     std::unique_ptr<GenericAssetsManager> m_generic_assets_manager;
     std::unique_ptr<Time> m_time;
-    std::unique_ptr<AnimationManager> m_anim_manager;
 
     Entity GetRootEntity();
 

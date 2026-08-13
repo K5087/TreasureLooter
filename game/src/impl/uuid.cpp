@@ -37,8 +37,8 @@ UUID::operator bool() const {
 }
 
 bool UUID::operator==(const UUID& o) const {
-    return m_data[0] == o.m_data[0] && m_data[1] == std::byte{0} &&
-           m_data[2] == std::byte{0} && m_data[3] == std::byte{0};
+    return m_data[0] == o.m_data[0] && m_data[1] == o.m_data[1] &&
+           m_data[2] == o.m_data[2] && m_data[3] == o.m_data[3];
 }
 
 std::string UUID::ToString() const {

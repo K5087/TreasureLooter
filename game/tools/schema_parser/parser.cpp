@@ -201,7 +201,7 @@ void Parser::parse_node(SchemaInfo& info, const TSNode& node,
             // }
         } else if (child_symbol == module_symbol) {
             auto name_node = find_field(child, "name");
-            info.name = ts_node_string(name_node);
+            info.name = get_node_string(name_node, source_code);
         } else if (child_symbol == import_symbol) {
             auto import = parse_import(child, source_code);
             if (import) {

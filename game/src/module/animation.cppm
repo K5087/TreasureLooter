@@ -1,8 +1,12 @@
 export module animation;
+export import animation.type;
 
+import path;
 import entity;
+import handle;
 import time;
 import manager;
+import asset.manager;
 
 import std;
 
@@ -20,26 +24,7 @@ public:
 
     virtual void Rewind() = 0;
     virtual TimeType GetFinishTime() const = 0;
-};
-
-enum class AnimationTrackType {
-    Linear,
-    Discrete,
-};
-
-enum class AnimationBindingPoint {
-    TransformPositionX,
-    TransformPositionY,
-    TransformScaleX,
-    TransformScaleY,
-
-    SpriteRegion,
-    SpriteSizeX,
-    SpriteSizeY,
-
-    SpriteImage,
-
-    BindingNum,
+    virtual AnimationTrackType GetType() const = 0;
 };
 
 template <typename T>
@@ -83,6 +68,8 @@ public:
         m_cur_time = 0;
     }
 
+    auto& GetKeyFrames() const { return m_keyframes; }
+
 protected:
     std::vector<keyframe_type> m_keyframes;
     TimeType m_cur_time{};
@@ -96,6 +83,10 @@ template <typename T>
 class AnimationTrack<T, AnimationTrackType::Linear>
     : public IAnimationTrack<T> {
 public:
+    AnimationTrackType GetType() const override {
+        return AnimationTrackType::Linear;
+    }
+
     T GetValue() const override {
         if (this->m_cur_frame + 1 >= this->m_keyframes.size()) {
             return this->m_keyframes[this->m_cur_frame].m_value;
@@ -112,6 +103,10 @@ template <typename T>
 class AnimationTrack<T, AnimationTrackType::Discrete>
     : public IAnimationTrack<T> {
 public:
+    AnimationTrackType GetType() const override {
+        return AnimationTrackType::Discrete;
+    }
+
     T GetValue() const override {
         return this->m_keyframes[this->mp_cur_frame].m_value;
     }
@@ -124,7 +119,7 @@ public:
     void AddTrack(AnimationBindingPoint binding,
                   std::unique_ptr<AnimationTrackBase> track) {
         m_max_time = std::max(m_max_time, track->GetFinishTime());
-        m_tracks[static_cast<std::size_t>(binding)] = std::move(track);
+        m_tracks[binding] = std::move(track);
     }
 
     void Play();
@@ -139,20 +134,34 @@ public:
 
     void Sync(Entity entity);
 
+    int GetLoopCount() const;
+
 private:
     bool m_is_playing = false;
     int m_loop{0};
     TimeType m_max_time{};
     TimeType m_cur_time{};
-    std::array<std::unique_ptr<AnimationTrackBase>,
-               static_cast<std::size_t>(AnimationBindingPoint::BindingNum)>
+    std::unordered_map<AnimationBindingPoint,
+                       std::unique_ptr<AnimationTrackBase>>
         m_tracks;
 };
 
-class AnimationManager : public ComponentManager<Animation> {
+class AnimationComponentManager : public ComponentManager<Animation> {
 public:
     void Update(TimeType delta_time);
 
 private:
+};
+
+using AnimationHandle = Handle<Animation>;
+
+class AnimationManager : public AssetManagerBase<Animation> {
+public:
+    AnimationHandle Load(const Path& filename) override {
+        // TODO: not impl
+        return {};
+    };
+
+    AnimationHandle Create();
 };
 }
