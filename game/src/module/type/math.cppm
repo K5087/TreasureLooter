@@ -41,6 +41,7 @@ Vec2 operator-(const Vec2&, const Vec2&);
 float Dot(const Vec2&, const Vec2&);
 float Cross(const Vec2&, const Vec2&);
 Vec2 operator-(const Vec2&);
+Vec2 lerp(const Vec2& a, const Vec2& b, float t);
 
 struct Color {
     float r{};
@@ -169,4 +170,10 @@ auto tag_invoke(deserialize_tag, simdjson_value& val, Radians& payload) {
     return simdjson::SUCCESS;
 }
 }  // namespace simdjson
+
+template <typename T>
+T Lerp(const T& a, const T& b, float t) {
+    using std::lerp;
+    return lerp(a, b, t);
+}
 }

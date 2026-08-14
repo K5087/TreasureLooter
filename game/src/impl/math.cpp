@@ -107,6 +107,10 @@ Vec2 operator-(const Vec2& o) {
     return Vec2(-o.x, -o.y);
 }
 
+Vec2 lerp(const Vec2& a, const Vec2& b, float t) {
+    return {std::lerp(a.x, b.x, t), std::lerp(a.y, b.y, t)};
+}
+
 Degrees::Degrees(float value) : m_value{value} {}
 
 Degrees::Degrees(Radians radians) {

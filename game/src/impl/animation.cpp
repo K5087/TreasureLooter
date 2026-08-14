@@ -1,5 +1,8 @@
+module;
+#include <log.hpp>
 module animation;
 
+import log;
 import uuid;
 import context;
 
@@ -53,80 +56,73 @@ void Animation::Update(float delta_time) {
     }
 }
 
-#define BEGIN_BINDING_POINT(binding)                                       \
-    if (auto it = m_tracks.find(AnimationBindingPoint::TransformPosition); \
-        it != m_tracks.end())
-
-#define handle_linear_track()                                               \
-    if (it->second->gettype() == AnimationTrackType::Linear) {              \
-        binding_target =                                                    \
-            static_cast<const AnimationTrack<decltype(binding_target),      \
-                                             AnimationTrackType::Linear>&>( \
-                *it->second)                                                \
-                .getvalue();                                                \
+#define FIND_TRACK(TrackType, Impl)                                       \
+    if (auto it = m_tracks.find(TrackType); it != m_tracks.end()) {       \
+        auto& track = it->second;                                         \
+        switch (track->GetType()) {                                       \
+            Impl default : LOGW("Unknow Track Type,Animation Sync Skip"); \
+        }                                                                 \
     }
-#define handle_discrete_track()                                               \
-    if (it->second->gettype() == AnimationTrackType::Discrete) {              \
-        binding_target =                                                      \
-            static_cast<const AnimationTrack<decltype(binding_target),        \
-                                             AnimationTrackType::Discrete>&>( \
-                *it->second)                                                  \
-                .getvalue();                                                  \
+
+#define TRACK_TYPE_CASE(CaseType, Target)                                   \
+    case CaseType: {                                                        \
+        Target =                                                            \
+            static_cast<const AnimationTrack<decltype(Target), CaseType>&>( \
+                *track)                                                     \
+                .GetValue();                                                \
+        break;                                                              \
     }
 
 void Animation::Sync(Entity entity) {
     auto& ctx = Context::GetInst();
 
     if (auto transform = ctx.m_transform_manager->Get(entity)) {
-        // #define BINDING_TARGET transform->m_position
-        //         BEGIN_BINDING_POINT(AnimationBindingPoint::TransformPosition)
-        //         {
-        //             HANDLE_LINEAR_TRACK();
-        //             HANDLE_DISCRETE_TRACK();
-        //         }
-        // #undef BINDING_TARGET
-        //
-        // #define BINDING_TARGET transform->m_scale
-        //         BEGIN_BINDING_POINT(AnimationBindingPoint::TransformScale) {
-        //             HANDLE_LINEAR_TRACK();
-        //             HANDLE_DISCRETE_TRACK();
-        //         }
-        // #undef BINDING_TARGET
-        //
-        // #define BINDING_TARGET transform->m_rotation
-        //         BEGIN_BINDING_POINT(AnimationBindingPoint::TransformRotation)
-        //         {
-        //             HANDLE_LINEAR_TRACK();
-        //             HANDLE_DISCRETE_TRACK();
-        //         }
-        // #undef BINDING_TARGET
-        //     }
-        //
-        //     if (auto sprite = ctx.m_sprite_manager->Get(entity)) {
-        // #define BINDING_TARGET sprite->m_image
-        //         BEGIN_BINDING_POINT(AnimationBindingPoint::SpriteImage) {
-        //             HANDLE_DISCRETE_TRACK();
-        //         }
-        // #undef BINDING_TARGET
-        //
-        // #define BINDING_TARGET sprite->m_region
-        //         BEGIN_BINDING_POINT(AnimationBindingPoint::SpriteRegion) {
-        //             HANDLE_DISCRETE_TRACK();
-        //         }
-        // #undef BINDING_TARGET
-        //
-        // #define BINDING_TARGET sprite->m_size
-        //         BEGIN_BINDING_POINT(AnimationBindingPoint::SpriteSize) {
-        //             HANDLE_LINEAR_TRACK();
-        //             HANDLE_DISCRETE_TRACK();
-        //         }
-        // #undef BINDING_TARGET
-        //
-        // #define BINDING_TARGET sprite->m_flip
-        //         BEGIN_BINDING_POINT(AnimationBindingPoint::SpriteFlip) {
-        //             HANDLE_DISCRETE_TRACK();
-        //         }
-        // #undef BINDING_TARGET
+        FIND_TRACK(
+            AnimationBindingPoint::TransformPosition,
+            TRACK_TYPE_CASE(AnimationTrackType::Linear, transform->m_position);
+            TRACK_TYPE_CASE(AnimationTrackType::Discrete,
+                            transform->m_position));
+
+        if (auto it = m_tracks.find(AnimationBindingPoint::TransformRotation);
+            it != m_tracks.end()) {
+            auto& track = it->second;
+            switch (track->GetType()) {
+                case AnimationTrackType::Linear: {
+                    transform->m_rotation = static_cast<const AnimationTrack<
+                        float, AnimationTrackType::Linear>&>(*track)
+                                                .GetValue();
+                    break;
+                }
+                case AnimationTrackType::Discrete: {
+                    transform->m_rotation = static_cast<const AnimationTrack<
+                        float, AnimationTrackType::Discrete>&>(*track)
+                                                .GetValue();
+                    break;
+                }
+                default:
+                    LOGW("Unknow Track Type,Animation Sync Skip");
+            }
+        }
+        FIND_TRACK(
+            AnimationBindingPoint::TransformScale,
+            TRACK_TYPE_CASE(AnimationTrackType::Linear, transform->m_scale);
+            TRACK_TYPE_CASE(AnimationTrackType::Discrete, transform->m_scale));
+    }
+    if (auto sprite = ctx.m_sprite_manager->Get(entity)) {
+        FIND_TRACK(
+            AnimationBindingPoint::SpriteRegion,
+            TRACK_TYPE_CASE(AnimationTrackType::Discrete, sprite->m_region));
+        FIND_TRACK(
+            AnimationBindingPoint::SpriteRegion,
+            TRACK_TYPE_CASE(AnimationTrackType::Discrete, sprite->m_image););
+        FIND_TRACK(
+            AnimationBindingPoint::SpriteFlip,
+            TRACK_TYPE_CASE(AnimationTrackType::Discrete, sprite->m_flip));
+
+        FIND_TRACK(
+            AnimationBindingPoint::SpriteSize,
+            TRACK_TYPE_CASE(AnimationTrackType::Linear, sprite->m_size);
+            TRACK_TYPE_CASE(AnimationTrackType::Discrete, sprite->m_size));
     }
 }
 

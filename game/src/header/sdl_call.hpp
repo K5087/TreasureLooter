@@ -1,8 +1,8 @@
 #pragma once
+#include <log.hpp>
 
 // import std;
 #include <SDL3/SDL.h>
-#include <log.hpp>
 #define SDL_CALL(expr)                             \
     do {                                           \
         if (!(expr)) {                             \

@@ -1,0 +1,20 @@
+{
+	"tracks": {
+		"TransformRotation": {
+			"type": "Linear",
+			"keyframes": [
+				{ "time": 0.0, "value": 100.0 },
+				{ "time": 3.0, "value": 800.0 }
+			]
+		},
+		"TransformPosition": {
+			"type": "Linear",
+			"keyframes": [
+				{ "time": 0.0, "value": { "x": 0.0, "y": 0.0 } },
+				{ "time": 3.0, "value": { "x": 100.0, "y": 100.0 } },
+				{ "time": 10.0, "value": { "x": 200.0, "y": 100.0 } }
+			]
+		}
+	},
+	"loop": -1
+}

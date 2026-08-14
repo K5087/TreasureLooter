@@ -2,6 +2,7 @@ export module animation;
 export import animation.type;
 
 import path;
+import math;
 import entity;
 import handle;
 import time;
@@ -95,7 +96,7 @@ public:
         auto& next_frame = this->m_keyframes[this->m_cur_frame + 1];
         float t = (this->m_cur_time - cur_frame.m_time) /
                   (next_frame.m_time - cur_frame.m_time);
-        return std::lerp(cur_frame.m_value, next_frame.m_value, t);
+        return Lerp(cur_frame.m_value, next_frame.m_value, t);
     }
 };
 
@@ -108,7 +109,7 @@ public:
     }
 
     T GetValue() const override {
-        return this->m_keyframes[this->mp_cur_frame].m_value;
+        return this->m_keyframes[this->m_cur_frame].m_value;
     }
 };
 

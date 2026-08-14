@@ -73,29 +73,38 @@ void Context::Update() {
             auto root_relationship = m_relation_manager->Get(GetRootEntity());
             root_relationship->m_children.push_back(result.m_payload.m_entity);
 
-            // auto children = m_relation_manager->Get(m_root_entity);
-            // Entity entity = children->m_children[0];
-            //
-            // auto track1 = std::make_unique<
-            //     AnimationTrack<float, AnimationTrackType::Linear>>();
-            // track1->AddKeyFrame({100, 0});
-            // track1->AddKeyFrame({800, 3});
-            // track1->AddKeyFrame({2000, 10});
-            // auto track2 = std::make_unique<
-            //     AnimationTrack<float, AnimationTrackType::Linear>>();
-            // track2->AddKeyFrame({100, 0});
-            // track2->AddKeyFrame({800, 3});
-            //
-            // Animation anim;
-            // anim.AddTrack(AnimationBindingPoint::TransformPositionX,
-            //               std::move(track1));
-            // anim.AddTrack(AnimationBindingPoint::TransformPositionY,
-            //               std::move(track2));
-            //
-            // anim.Play();
-            // anim.SetLoop(Animation::InfLoop);
-            // m_animation_component_manager->RegisterEntity(entity,
-            //                                               std::move(anim));
+            auto children = m_relation_manager->Get(m_root_entity);
+            Entity entity = children->m_children[0];
+
+            auto track1 = std::make_unique<
+                AnimationTrack<Vec2, AnimationTrackType::Linear>>();
+            track1->AddKeyFrame({
+                {0, 0},
+                0
+            });
+            track1->AddKeyFrame({
+                {100, 100},
+                3
+            });
+            track1->AddKeyFrame({
+                {200, 100},
+                10
+            });
+            auto track2 = std::make_unique<
+                AnimationTrack<float, AnimationTrackType::Linear>>();
+            track2->AddKeyFrame({100, 0});
+            track2->AddKeyFrame({800, 3});
+
+            Animation anim;
+            anim.AddTrack(AnimationBindingPoint::TransformPosition,
+                          std::move(track1));
+            anim.AddTrack(AnimationBindingPoint::TransformRotation,
+                          std::move(track2));
+
+            anim.Play();
+            anim.SetLoop(Animation::InfLoop);
+            m_animation_component_manager->RegisterEntity(entity,
+                                                          std::move(anim));
         }
         {
             auto result = LoadAsset<EntityInstance>(
