@@ -4,27 +4,38 @@
 		{
 			"name": "default",
 			"binaryDir": "${sourceDir}/build",
+			"generator": "Ninja",
 			"cacheVariables": {
 				"CMAKE_BUILD_TYPE": "Debug",
 				"CMAKE_INSTALL_PREFIX": "install"
 			}
 		},
 		{
-			"name": "CI-Linux",
-			"binaryDir": "${sourceDir}/build",
-			"generator": "Ninja"
-		},
-		{
-			"name": "CI-Emscripten",
-			"binaryDir": "${sourceDir}/emcmake-build",
-			"generator": "Ninja"
-		},
-		{
-			"name": "CI-Windows",
-			"binaryDir": "${sourceDir}/build",
-			"generator": "Ninja",
+			"name": "gcc",
+			"displayName": "GNU GCC",
+			"inherits": "default",
+
 			"cacheVariables": {
-				"CMAKE_SYSTEM_VERSION": "10.0.26100.0"
+				"CMAKE_C_COMPILER": "gcc",
+				"CMAKE_CXX_COMPILER": "g++"
+			}
+		},
+		{
+			"name": "clang",
+			"displayName": "LLVM Clang",
+			"inherits": "default",
+			"cacheVariables": {
+				"CMAKE_C_COMPILER": "clang",
+				"CMAKE_CXX_COMPILER": "clang++"
+			}
+		},
+		{
+			"name": "msvc",
+			"displayName": "MSVC",
+			"inherits": "default",
+			"cacheVariables": {
+				"CMAKE_C_COMPILER": "cl",
+				"CMAKE_CXX_COMPILER": "cl"
 			}
 		}
 	]
